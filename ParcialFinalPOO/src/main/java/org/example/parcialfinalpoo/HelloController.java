@@ -1,4 +1,5 @@
 package org.example.parcialfinalpoo;
+import EntidadesBD.*;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
