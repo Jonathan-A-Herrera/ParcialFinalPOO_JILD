@@ -1,109 +1,160 @@
-
 package org.example.parcialfinalpoo;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class HelloController {
 
+    // 00085720 Campos de texto para ingresar datos
     @FXML
-    private TextField idClienteA;
+    private TextField idField; // 00085720 Campo de texto para el ID
     @FXML
-    private TextField fechaInicioA;
+    private TextField nameField; // 00085720 Campo de texto para el nombre
     @FXML
-    private TextField fechaFinA;
-    @FXML
-    private TextArea reporteTextAreaA;
+    private TextField descriptionField; // 00085720 Campo de texto para la descripción
 
+    // 00085720 Tabla y sus columnas para mostrar los datos
     @FXML
-    private TextField idClienteB;
+    private TableView<Item> dataTableView; // 00085720 Tabla para mostrar los elementos
     @FXML
-    private TextField mesB;
+    private TableColumn<Item, String> idColumn; // 00085720 Columna para el ID
     @FXML
-    private TextField añoB;
+    private TableColumn<Item, String> nameColumn; // 00085720 Columna para el nombre
     @FXML
-    private TextArea reporteTextAreaB;
+    private TableColumn<Item, String> descriptionColumn; // 00085720 Columna para la descripción
 
-    @FXML
-    private TextField idClienteC;
-    @FXML
-    private TextArea reporteTextAreaC;
+    // 00085720 Lista observable para almacenar los elementos
+    private final ObservableList<Item> itemList = FXCollections.observableArrayList();
 
+    // 00085720 Metodo que se llama al inicializar el controlador
     @FXML
-    private TextField facilitadorTextField;
-    @FXML
-    private TextArea reporteTextAreaD;
-
-    @FXML
-    protected void onGenerarReporteAButtonClick() {
-        String idCliente = idClienteA.getText();
-        String fechaInicio = fechaInicioA.getText();
-        String fechaFin = fechaFinA.getText();
-
-        // Logica para generar el reporte A
-        String reporteA = generarReporteA(idCliente, fechaInicio, fechaFin);
-
-        // Mostrar el reporte en el TextArea
-        reporteTextAreaA.setText(reporteA);
+    public void initialize() {
+        // Configurar las columnas de la tabla
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id")); // 00085720 Configura la columna 'idColumn'
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name")); // 00085720 Configura la columna 'nameColumn'
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description")); // 00085720 Configura la columna 'descriptionColumn'
+        dataTableView.setItems(itemList); // 00085720 Vincular la lista a la tabla
     }
 
+    //00085720 Metodo para crear un nuevo elemento
     @FXML
-    protected void onGenerarReporteBButtonClick() {
-        String idCliente = idClienteB.getText();
-        String mes = mesB.getText();
-        String año = añoB.getText();
+    private void create() {
+        //00085720 Obtener los valores de los campos de texto
+        String id = idField.getText(); //00085720 Obtiene el texto del campo 'idField' y lo almacena en la variable 'id'
+        String name = nameField.getText(); //00085720 Obtiene el texto del campo 'nameField' y lo almacena en la variable 'name'
+        String description = descriptionField.getText(); //00085720 Obtiene el texto del campo 'descriptionField' y lo almacena en la variable 'description'
 
-        // Logica para generar el reporte B
-        String reporteB = generarReporteB(idCliente, mes, año);
+        // 00085720 Validar que todos los campos esten llenos
+        if (id.isEmpty() || name.isEmpty() || description.isEmpty()) { //00085720 Si id, name o description estan vacios
+            showAlert(Alert.AlertType.ERROR, "Error", "Todos los campos son obligatorios."); //00085720 Muestra alerta
+            return;
+        }
 
-        // Mostrar el reporte en el TextArea
-        reporteTextAreaB.setText(reporteB);
+        // 00085720 Crear un nuevo objeto Item y agregarlo a la lista
+        Item item = new Item(id, name, description); //00085720 Crea un nuevo objeto Item
+        itemList.add(item); //00085720 Agrega el objeto Item a la lista
+        clearFields(); // 00085720 Limpiar los campos de texto
     }
 
+    // 00085720 Metodo para leer un elemento por su ID
     @FXML
-    protected void onGenerarReporteCButtonClick() {
-        String idCliente = idClienteC.getText();
+    private void read() {
+        String id = idField.getText(); // 00085720 Obtener el ID del campo de texto
 
-        // Logica para generar el reporte C
-        String reporteC = generarReporteC(idCliente);
+        // 00085720Validar que el campo de ID no este vacío
+        if (id.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "ID es obligatorio."); //00085720 muestra alerta
+            return;
+        }
 
-        // Mostrar el reporte en el TextArea
-        reporteTextAreaC.setText(reporteC);
+        // 00085720 Buscar el elemento por su ID
+        Item item = findItemById(id); //00085720 Busca el elemento por su ID
+        if (item != null) { //00085720 Si item diferente a nulo
+            // 00085720 Mostrar los datos en los campos de texto
+            nameField.setText(item.getName()); //00085720 Asigna el nombre del elemento al campo de texto
+            descriptionField.setText(item.getDescription()); //00085720 Asigna la descripcion del elemento
+        } else {
+            showAlert(Alert.AlertType.INFORMATION, "Informacion", "Elemento no encontrado."); // 00085720 muestra alerta
+        }
     }
 
+    // 00085720Metodo para actualizar un elemento
     @FXML
-    protected void onGenerarReporteDButtonClick() {
-        String facilitador = facilitadorTextField.getText();
+    private void update() {
+        // 00085720 Obtener los valores de los campos de texto
+        String id = idField.getText(); //00085720 Obtiene el texto del campo 'idField' y lo almacena en la variable 'id'
+        String name = nameField.getText(); // 00085720 Obtiene el texto del campo 'nameField' y lo almacena en la variable 'name'
+        String description = descriptionField.getText(); // 00085720 Obtiene el texto del campo 'description' y lo almacena en la variable 'description'
 
-        // Logica para generar el reporte D
-        String reporteD = generarReporteD(facilitador);
+        // Validar que todos los campos esten llenos
+        if (id.isEmpty() || name.isEmpty() || description.isEmpty()) { // 00085720 Si id, name o description estan vacios
+            showAlert(Alert.AlertType.ERROR, "Error", "Todos los campos son obligatorios."); // 00085720 Mostrar alerta
+            return;
+        }
 
-        // Mostrar el reporte en el TextArea
-        reporteTextAreaD.setText(reporteD);
+        //00085720 Buscar el elemento por su ID
+        Item item = findItemById(id);
+        if (item != null) { //00085720 Si item diferente a nulo
+            //00085720 Actualizar los valores del elemento
+            item.setName(name); // 00085720 Actualizar el nombre del elemento
+            item.setDescription(description); //00085720 Actualizar la descripcion del elemento
+            dataTableView.refresh(); // 00085720 Refrescar la tabla para mostrar los cambios
+            clearFields(); // 00085720 Limpiar los campos de texto
+        } else { //00085720 Si no
+            showAlert(Alert.AlertType.INFORMATION, "Informacion", "Elemento no encontrado."); //00085720 Mostrar alerta
+        }
     }
 
-    private String generarReporteA(String idCliente, String fechaInicio, String fechaFin) {
-        // Aquiva la logica para generar el reporte A
-        // Retornar un string con el contenido del reporte
-        return "Reporte A generado para cliente " + idCliente + " desde " + fechaInicio + " hasta " + fechaFin;
+    // 00085720 Metodo para eliminar un elemento
+    @FXML
+    private void delete() {
+        String id = idField.getText(); // 00085720 Obtener el ID del campo de texto
+
+        // Validar que el campo de ID no este vacío
+        if (id.isEmpty()) { //00085720 Si id esta vacio
+            showAlert(Alert.AlertType.ERROR, "Error", "ID es obligatorio."); // 00085720 Mostrar alerta
+            return;
+        }
+
+        // 00085720 Buscar el elemento por su ID
+        Item item = findItemById(id);
+        if (item != null) { // 00085720 Item diferente a nulo
+            itemList.remove(item); //00085720 Eliminar el elemento de la lista
+            clearFields(); // 00085720 Limpiar los campos de texto
+        } else { // 00085720 Si no
+            showAlert(Alert.AlertType.INFORMATION, "Informacion", "Elemento no encontrado."); //00085720 Mostrar alerta
+        }
     }
 
-    private String generarReporteB(String idCliente, String mes, String año) {
-        // Aqui va la logica para generar el reporte B
-        // Retornar un string con el contenido del reporte
-        return "Reporte B generado para cliente " + idCliente + " en el mes " + mes + " del año " + año;
+    // 00085720 Metodo para buscar un elemento por su ID
+    private Item findItemById(String id) {
+        for (Item item : itemList) { // 00085720 Recorrer la lista de elementos
+            if (item.getId().equals(id)) { // 00085720 Comparar el ID del elemento con el ID del campo de texto
+                return item; // 00085720 Retornar el elemento si se encuentra
+            }
+        }
+        return null; // 00085720 Retornar null si no se encuentra
     }
 
-    private String generarReporteC(String idCliente) {
-        // Aqui va la logica para generar el reporte C
-        // Retornar un string con el contenido del reporte
-        return "Reporte C generado para cliente " + idCliente;
+    // 00085720 Metodo para limpiar los campos de texto
+    private void clearFields() {
+        idField.clear(); // 00085720 Limpia campos
+        nameField.clear(); // 00085720 Limpia campos
+        descriptionField.clear(); // 00085720 Limpia campos
     }
 
-    private String generarReporteD(String facilitador) {
-        // Aqui va la logica para generar el reporte D
-        // Retornar un string con el contenido del reporte
-        return "Reporte D generado para compras con facilitador " + facilitador;
+    // 00085720 Metodo para mostrar alertas
+    private void showAlert(Alert.AlertType alertType, String title, String content) {
+        Alert alert = new Alert(alertType, content, ButtonType.OK); // 00085720 Crea una alerta
+        alert.setTitle(title); // 00085720 Titulo de la alerta
+        alert.setHeaderText(null); // 00085720 No tiene encabezado
+        alert.showAndWait(); // 00085720 Mostrar la alerta y esperar a que se cierre
     }
 }
