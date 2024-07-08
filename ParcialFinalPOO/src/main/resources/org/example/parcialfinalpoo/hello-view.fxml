@@ -1,22 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
 <TabPane xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.parcialfinalpoo.HelloController">
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
   </padding>
+  <Tab text="CRUD">
+    <AnchorPane>
+      <VBox spacing="10">
+        <padding>
+          <Insets bottom="10" left="10" right="10" top="10" />
+        </padding>
+        <HBox spacing="10">
+          <Label text="ID:" />
+          <TextField fx:id="idField" />
+        </HBox>
+        <HBox spacing="10">
+          <Label text="Nombre:" />
+          <TextField fx:id="nameField" />
+        </HBox>
+        <HBox spacing="10">
+          <Label text="Descripción:" />
+          <TextField fx:id="descriptionField" />
+        </HBox>
+        <HBox spacing="10">
+          <Button onAction="#create" text="Crear" />
+          <Button onAction="#read" text="Leer" />
+          <Button onAction="#update" text="Actualizar" />
+          <Button onAction="#delete" text="Eliminar" />
+        </HBox>
+        <TableView fx:id="dataTableView">
+          <columns>
+            <TableColumn fx:id="idColumn" text="ID" />
+            <TableColumn fx:id="nameColumn" text="Nombre" />
+            <TableColumn fx:id="descriptionColumn" text="Descripción" />
+          </columns>
+        </TableView>
+      </VBox>
+    </AnchorPane>
+  </Tab>
   <Tab text="Reporte A">
     <VBox alignment="CENTER" spacing="20.0">
       <HBox spacing="10.0">
@@ -31,7 +57,8 @@
           </HBox.margin>
           <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-          </padding></Label>
+          </padding>
+        </Label>
       </HBox>
       <HBox spacing="10.0">
         <Label text="ID Cliente:" />
@@ -59,27 +86,29 @@
             <Image url="@assets/logo-uca2.png" />
           </image>
         </ImageView>
-        <Label text="Reporte B: Total de dinero gastado por cliente en un mes">
+        <Label text="Reporte B: Total de compras por cliente en un periodo">
           <HBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="45.0" />
           </HBox.margin>
           <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-          </padding></Label>
+          </padding>
+        </Label>
       </HBox>
       <HBox spacing="10.0">
         <Label text="ID Cliente:" />
         <TextField fx:id="idClienteB" />
-        <Label text="Mes:" />
-        <TextField fx:id="mesB" />
-        <Label text="Año:" />
-        <TextField fx:id="añoB" />
+        <Label text="Fecha Inicio:" />
+        <TextField fx:id="fechaInicioB" />
+        <Label text="Fecha Fin:" />
+        <TextField fx:id="fechaFinB" />
         <Button onAction="#onGenerarReporteBButtonClick" text="Generar Reporte B" />
       </HBox>
       <TableView fx:id="reporteTableViewB" prefHeight="200.0" prefWidth="450.0">
         <columns>
-          <TableColumn prefWidth="125.59997177124023" text="Mes" />
-          <TableColumn prefWidth="196.79994201660156" text="Monto Total" />
+          <TableColumn prefWidth="159.19997787475586" text="ID Cliente" />
+          <TableColumn prefWidth="119.20002746582031" text="Nombre" />
+          <TableColumn prefWidth="220.79998779296875" text="Total Compras" />
         </columns>
       </TableView>
     </VBox>
@@ -92,13 +121,14 @@
             <Image url="@assets/logo-uca2.png" />
           </image>
         </ImageView>
-        <Label text="Reporte C: Listar tarjetas de un cliente">
+        <Label text="Reporte C: Listar tarjetas por cliente">
           <HBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="45.0" />
           </HBox.margin>
           <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-          </padding></Label>
+          </padding>
+        </Label>
       </HBox>
       <HBox spacing="10.0">
         <Label text="ID Cliente:" />
@@ -128,7 +158,8 @@
           </HBox.margin>
           <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-          </padding></Label>
+          </padding>
+        </Label>
       </HBox>
       <HBox spacing="10.0">
         <Label text="Facilitador de Tarjeta:" />
@@ -144,5 +175,4 @@
       </TableView>
     </VBox>
   </Tab>
-
 </TabPane>
