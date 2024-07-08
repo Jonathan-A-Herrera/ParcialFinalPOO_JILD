@@ -8,10 +8,18 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-public class HelloController {
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.ResourceBundle;
+
+public class HelloController implements Initializable {
 
     // 00085720 Campos de texto para ingresar datos
     @FXML
@@ -19,7 +27,11 @@ public class HelloController {
     @FXML
     private TextField nameField; // 00085720 Campo de texto para el nombre
     @FXML
+
     private TextField descriptionField; // 00085720 Campo de texto para la descripción
+
+    private TableView reporteTableViewA;
+
 
     // 00085720 Tabla y sus columnas para mostrar los datos
     @FXML
@@ -190,4 +202,25 @@ public class HelloController {
         // Codigo para generar reporte E
         showAlert(Alert.AlertType.INFORMATION, "Reporte E", "Generar Reporte E");
     }
+
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+       connectToDatabase();
+    }
+
+    public void connectToDatabase(){ //00013423: Creando una funcion para establecer conexion con la base de datos
+        try {
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); //00013423: Cargando el controlador para la base de datos
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; //00013423: Variable String la cual se inicializa con la URL de la conexion a la BD
+            String user = "poo"; //00013423: Usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
+            String password = "ParcialFinal"; //00013423: Contraseña del usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
+            Connection conn = DriverManager.getConnection(url,user,password); //00013423: Estableciendo conexion con la base de datos
+            System.out.println("Se establecio la conexion correctamente"); //00013423: Mensaje para saber si la conexion se establecio correctamente
+        } catch (Exception e){ //00013423: Control para el manejo de excepciones
+            e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+        }
+    }
+
 }
+
