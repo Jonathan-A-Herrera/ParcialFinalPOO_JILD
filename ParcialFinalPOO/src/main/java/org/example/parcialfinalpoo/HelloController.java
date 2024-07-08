@@ -2,6 +2,7 @@ package org.example.parcialfinalpoo;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -68,7 +69,7 @@ public class HelloController {
     private void read() {
         String id = idField.getText(); // 00085720 Obtener el ID del campo de texto
 
-        // 00085720Validar que el campo de ID no este vacío
+        // 00085720 Validar que el campo de ID no este vacío
         if (id.isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Error", "ID es obligatorio."); //00085720 muestra alerta
             return;
@@ -85,7 +86,7 @@ public class HelloController {
         }
     }
 
-    // 00085720Metodo para actualizar un elemento
+    // 00085720 Metodo para actualizar un elemento
     @FXML
     private void update() {
         // 00085720 Obtener los valores de los campos de texto
@@ -156,5 +157,37 @@ public class HelloController {
         alert.setTitle(title); // 00085720 Titulo de la alerta
         alert.setHeaderText(null); // 00085720 No tiene encabezado
         alert.showAndWait(); // 00085720 Mostrar la alerta y esperar a que se cierre
+    }
+
+    // Metodos para generar reportes
+
+    @FXML
+    private void onGenerarReporteAButtonClick(ActionEvent event) {
+        // Codigo para generar reporte A
+        showAlert(Alert.AlertType.INFORMATION, "Reporte A", "Generar Reporte A");
+    }
+
+    @FXML
+    private void onGenerarReporteBButtonClick(ActionEvent event) {
+        // Codigo para generar reporte B
+        showAlert(Alert.AlertType.INFORMATION, "Reporte B", "Generar Reporte B");
+    }
+
+    @FXML
+    private void onGenerarReporteCButtonClick(ActionEvent event) {
+        // Codigo para generar reporte C
+        showAlert(Alert.AlertType.INFORMATION, "Reporte C", "Generar Reporte C");
+    }
+
+    @FXML
+    private void onGenerarReporteDButtonClick(ActionEvent event) {
+        // Codigo para generar reporte D
+        showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Generar Reporte D");
+    }
+
+    @FXML
+    private void onGenerarReporteEButtonClick(ActionEvent event) {
+        // Codigo para generar reporte E
+        showAlert(Alert.AlertType.INFORMATION, "Reporte E", "Generar Reporte E");
     }
 }
