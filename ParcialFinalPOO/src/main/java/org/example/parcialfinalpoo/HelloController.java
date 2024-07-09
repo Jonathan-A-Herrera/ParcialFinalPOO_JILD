@@ -60,11 +60,11 @@ public class HelloController implements Initializable {
     @FXML
     private TableView<Tarjeta> reporteTableViewC; //00379823: Table view usada para el reporte C
     @FXML
-    private TableColumn<Tarjeta, String> numTarjetaC;
+    private TableColumn<Tarjeta, String> numTarjetaC; //00379823: Columna de la TVA que contiene el numero de tarjeta
     @FXML
-    private TableColumn<Tarjeta,String> tipoTarjetaC;
+    private TableColumn<Tarjeta,String> tipoTarjetaC; //00379823: Columna de la TVA que contiene el tipo de tarjeta
     @FXML
-    private TableColumn<Tarjeta, String> fechaExpTarjetaC;
+    private TableColumn<Tarjeta, String> fechaExpTarjetaC; //00379823: Columna de la TVA que contiene la fecha de expiración de la tarjeta
 
     // 00085720 Tabla y sus columnas para mostrar los datos
     @FXML
