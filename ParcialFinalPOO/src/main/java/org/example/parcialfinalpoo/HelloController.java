@@ -8,9 +8,14 @@ import javafx.scene.control.*;
 import javafx.fxml.Initializable;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ResourceBundle;
 
 public class HelloController implements Initializable {
@@ -24,6 +29,24 @@ public class HelloController implements Initializable {
     private TextField descriptionField; // 00085720 Campo de texto para la descripción
     @FXML
     private TextField facilitadorField; // 00085720 Campo de texto para el facilitador
+    @FXML
+    private Label facilitadorTextField; // 00085720 Campo de texto para el estado del reporte
+    @FXML
+    private ComboBox<String> cbFacilitador; // 00085720 ComboBox para el facilitador
+
+    private ReporteD reporteD; // 00085720 Variable para el objeto ReporteD
+    @FXML
+    private TextField facilitadorFieldD; // Campo de texto para el facilitador de tarjeta
+    @FXML
+    private TableView<Cliente> reporteTableViewD; // TableView para mostrar los resultados del Reporte D
+    @FXML
+    private TableColumn<Cliente, Integer> idColumnD; // Columna para el ID del cliente
+    @FXML
+    private TableColumn<Cliente, String> nameColumnD; // Columna para el nombre del cliente
+    @FXML
+    private TableColumn<Cliente, Integer> comprasColumnD; // Columna para la cantidad de compras
+    @FXML
+    private TableColumn<Cliente, Double> totalGastadoColumnD; // Columna para el total gastado
 
     @FXML
     private TableView<Item> dataTableView; // 00085720 Tabla para mostrar los elementos
@@ -39,19 +62,31 @@ public class HelloController implements Initializable {
     // 00085720 Lista observable para almacenar los elementos
     private final ObservableList<Item> itemList = FXCollections.observableArrayList();
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Configurar las columnas de la tabla
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id")); // 00085720 Configura la columna 'idColumn'
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name")); // 00085720 Configura la columna 'nameColumn'
-        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description")); // 00085720 Configura la columna 'descriptionColumn'
-        facilitadorColumn.setCellValueFactory(new PropertyValueFactory<>("facilitador")); // 00085720 Configura la columna 'facilitadorColumn'
-        dataTableView.setItems(itemList); // 00085720 Vincular la lista a la tabla
-        connectToDatabase(); //00085720 Inicializar la conexión a la base de datos
-    }
-    ObservableList<String> facilitadores = FXCollections.observableArrayList(
+    ObservableList<String> facilitadores = FXCollections.observableArrayList( //00085720 Lista de facilitadores
             "Visa", "MasterCard", "American Express"
-    ); // 00085720 Lista de facilitadores
+    );
+
+    @FXML
+    public void poblarCombo() {
+        cbFacilitador.setItems(facilitadores); // 00085720 se asignan los facilitadores al ComboBox
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        connectToDatabase();
+        // Configurar las columnas de la tabla
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        facilitadorColumn.setCellValueFactory(new PropertyValueFactory<>("facilitador"));
+        dataTableView.setItems(itemList);
+
+        // Configurar las columnas de la tabla de reporte D
+        idColumnD.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente"));
+        nameColumnD.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        comprasColumnD.setCellValueFactory(new PropertyValueFactory<>("cantidadCompras"));
+        totalGastadoColumnD.setCellValueFactory(new PropertyValueFactory<>("totalGastado"));
+    }
 
     // 00085720 Metodo para crear un nuevo elemento
     @FXML
@@ -128,13 +163,14 @@ public class HelloController implements Initializable {
     @FXML
     private void delete() {
         String id = idField.getText(); // 00085720 Obtener el ID del campo de texto
-        // 00085720 Validar que el campo de ID no este vacío
-        if (id.isEmpty()) { // 00085720 Si id esta vacio
+        if (id.isEmpty()) { // 00085720 Validar que el campo de ID no este vacio
             showAlert(Alert.AlertType.ERROR, "Error", "ID es obligatorio."); // 00085720 Mostrar alerta
             return;
         }
-        Item item = findItemById(id); // 00085720 Buscar el elemento por su ID
-        if (item != null) { // 00085720 Item diferente a nulo
+
+        // 00085720 Buscar el elemento por su ID y eliminarlo de la lista
+        Item item = findItemById(id); // 00085720 Busca el elemento por su ID
+        if (item != null) { // 00085720 Si item diferente a nulo
             itemList.remove(item); // 00085720 Eliminar el elemento de la lista
             clearFields(); // 00085720 Limpiar los campos de texto
         } else { // 00085720 Si no
@@ -142,70 +178,101 @@ public class HelloController implements Initializable {
         }
     }
 
-    // 00085720 Metodo para buscar un elemento por su ID
+    // 00085720 Metodo para encontrar un elemento por su ID
     private Item findItemById(String id) {
-        for (Item item : itemList) { // 00085720 Recorrer la lista de elementos
-            if (item.getId().equals(id)) { // 00085720 Comparar el ID del elemento con el ID del campo de texto
-                return item; // 00085720 Retornar el elemento si se encuentra
+        for (Item item : itemList) { // 00085720 Itera sobre los elementos de la lista
+            if (item.getId().equals(id)) { // 00085720 Si el ID del elemento coincide con el ID buscado
+                return item; // 00085720 Retorna el elemento
             }
         }
-        return null; // 00085720 Retornar null si no se encuentra
+        return null; // 00085720 Si no encuentra el elemento retorna null
+    }
+
+    // 00085720 Metodo para mostrar alertas
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType); // 00085720 Crear una nueva alerta
+        alert.setTitle(title); // 00085720 Establecer el título de la alerta
+        alert.setHeaderText(null); // 00085720 Establecer el encabezado de la alerta en nulo
+        alert.setContentText(message); // 00085720 Establecer el mensaje de la alerta
+        alert.showAndWait(); // 00085720 Mostrar la alerta y esperar
     }
 
     // 00085720 Metodo para limpiar los campos de texto
     private void clearFields() {
-        idField.clear(); // 00085720 Limpia campos
-        nameField.clear(); // 00085720 Limpia campos
-        descriptionField.clear(); // 00085720 Limpia campos
-        facilitadorField.clear(); // 00085720 Limpia campos
+        idField.clear(); // 00085720 Limpiar el campo de texto del ID
+        nameField.clear(); // 00085720 Limpiar el campo de texto del nombre
+        descriptionField.clear(); // 00085720 Limpiar el campo de texto de la descripcion
+        facilitadorField.clear(); // 00085720 Limpiar el campo de texto del facilitador
     }
 
-    // 00085720 Metodo para mostrar alertas
-    private void showAlert(Alert.AlertType alertType, String title, String content) {
-        Alert alert = new Alert(alertType, content, ButtonType.OK); // 00085720 Crea una alerta
-        alert.setTitle(title); // 00085720 Titulo de la alerta
-        alert.setHeaderText(null); // 00085720 No tiene encabezado
-        alert.showAndWait(); // 00085720 Mostrar la alerta y esperar a que se cierre
-    }
-
-    // 00085720 Metodos para generar reportes
+    //00085720 metodo para guardar el csv
     @FXML
-    private void onGenerarReporteAButtonClick(ActionEvent event) {
-        // 00085720 Codigo para generar reporte A
-        showAlert(Alert.AlertType.INFORMATION, "Reporte A", "Generar Reporte A");
+    private void guardarCSV() {
+        try (FileWriter writer = new FileWriter("report.csv")) { // 00085720 Crea un nuevo FileWriter para el archivo "report.csv"
+            writer.write("ID,Name,Description,Facilitador\n"); // 00085720 Escribe los encabezados en el archivo CSV
+            for (Item item : itemList) { // 00085720 Itera sobre los elementos de la lista
+                writer.write(item.getId() + "," + item.getName() + "," + item.getDescription() + "," + item.getFacilitador() + "\n"); // 00085720 Escribe los datos del elemento en el archivo CSV
+            }
+            showAlert(Alert.AlertType.INFORMATION, "Informacion", "Datos guardados en report.csv"); // 00085720 Muestra alerta
+        } catch (IOException e) { // 00085720 Captura cualquier excepción de E/S
+            showAlert(Alert.AlertType.ERROR, "Error", "No se pudo guardar el archivo."); // 00085720 Muestra alerta
+        }
     }
 
-    @FXML
-    private void onGenerarReporteBButtonClick(ActionEvent event) {
-        // 00085720 Codigo para generar reporte B
-        showAlert(Alert.AlertType.INFORMATION, "Reporte B", "Generar Reporte B");
-    }
+    private void connectToDatabase() {
+        String url = "jdbc:mysql://localhost:3306/tienda";
+        String user = "root";
+        String password = "password";
 
-    @FXML
-    private void onGenerarReporteCButtonClick(ActionEvent event) {
-        // 00085720 Codigo para generar reporte C
-        showAlert(Alert.AlertType.INFORMATION, "Reporte C", "Generar Reporte C");
+        try {
+            Connection connection = DriverManager.getConnection(url, user, password);
+            String query = "SELECT * FROM items";
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                String id = resultSet.getString("id");
+                String name = resultSet.getString("name");
+                String description = resultSet.getString("description");
+                String facilitador = resultSet.getString("facilitador");
+
+                Item item = new Item(id, name, description, facilitador);
+                itemList.add(item);
+            }
+
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void onGenerarReporteDButtonClick(ActionEvent event) {
-        // 00085720 Codigo para generar reporte D
-        ReporteD reporteD = new ReporteD();
-        reporteD.crearReporteD(); // Llamar al metodo para generar el reporte D
-        showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Reporte D generado correctamente.");
-    }
+        String facilitador = facilitadorFieldD.getText();
 
-    public void connectToDatabase() { // 00013423: Creando una funcion para establecer conexion con la base de datos
-        try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // 00013423: Cargando el controlador para la base de datos
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; // 00013423: Variable String la cual se inicializa con la URL de la conexion a la BD
-            String user = "poo"; // 00013423: Usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
-            String password = "ParcialFinal"; // 00013423: Contraseña del usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
-            Connection conn = DriverManager.getConnection(url, user, password); // 00013423: Estableciendo conexion con la base de datos
-            System.out.println("Se establecio la conexion correctamente"); // 00013423: Mensaje para saber si la conexion se establecio correctamente
-        } catch (Exception e) { // 00013423: Control para el manejo de excepciones
-            e.printStackTrace(); // 00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+        if (facilitador.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Fallo", "El facilitador de tarjeta es obligatorio");
+        } else {
+            ReporteD reporteD = new ReporteD(facilitador);
+            ObservableList<Cliente> datos = reporteD.getClientes();
+            reporteTableViewD.setItems(datos);
+
+            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteD - " + java.time.LocalDateTime.now().toString().replace(":", "-") + ".txt");
+            try {
+                FileWriter writer = new FileWriter(file);
+                for (Cliente cliente : datos) {
+                    String info = "ID: " + cliente.getID_Cliente()
+                            + "    Nombre: " + cliente.getNombre()
+                            + "    Cantidad de Compras: " + cliente.getCantidadCompras()
+                            + "    Total Gastado: " + cliente.getTotalGastado() + "\n";
+                    writer.write(info);
+                }
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
-
