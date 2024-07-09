@@ -1,4 +1,3 @@
-
 package org.example.parcialfinalpoo;
 
 // Clase que representa un elemento con ID, nombre y descripcion

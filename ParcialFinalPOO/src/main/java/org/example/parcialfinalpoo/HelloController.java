@@ -22,10 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
@@ -208,12 +205,12 @@ public class HelloController implements Initializable {
 
     @FXML
     private void onGenerarReporteAButtonClick(ActionEvent event) { //00013423: Boton que genera el reporte A
-        if (idClienteA.getText().isEmpty() || fechaInicioA.getText().isEmpty() || fechaFinA.getText().isEmpty()){ //00013423: Mostrara una alerta en caso de que no se haya llenado uno de estos campos
-            showAlert(Alert.AlertType.WARNING,"Fallo","Llene todos los campos"); //00013423: Mostrara una alerta
+        if (idClienteA.getText().isEmpty() || fechaInicioA.getText().isEmpty() || fechaFinA.getText().isEmpty()) { //00013423: Mostrara una alerta en caso de que no se haya llenado uno de estos campos
+            showAlert(Alert.AlertType.WARNING, "Fallo", "Llene todos los campos"); //00013423: Mostrara una alerta
         } else {
             ObservableList<Cliente> datos = getClientes(); //00013423: Se instancia un objeto datos que guardara la lista de clientes que retorna el netodo getClientes();
             reporteTableViewA.setItems(datos); //00013423: Mostrara los datos en el TableViewA del reporte A en sus casillas correspondientes.
-            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/","ReporteA.txt"); //00013423: Se crea un archivo file en la ruta actual, con el nombre ReporteA.txt
+            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteA.txt"); //00013423: Se crea un archivo file en la ruta actual, con el nombre ReporteA.txt
             generarReporteA(file); //00013423: Se llama al metodo que genera los reportes de la consulta A
         }
     }
@@ -269,8 +266,8 @@ public class HelloController implements Initializable {
             String reporteA = "SELECT cl.ID_Cliente, cl.Nombre, trns.Monto_Total as 'Monto Total', trns.Fecha_Compra as 'Fecha de compra' from Cliente cl\n" +
                     "inner join Tarjeta trj ON trj.ID_Cliente = cl.ID_Cliente\n" +
                     "inner join Transacción trns ON trns.Número_Tarjeta = trj.Número_Tarjeta\n" +
-                    "where cl.ID_Cliente =" + id +  "AND\n" + //00013423: Se hace uso de la variable id declarada arriba como parametro de busqueda
-                    "trns.Fecha_Compra BETWEEN " + "'"+fechaInicioA.getText()+"'" + " and " + "'"+fechaFinA.getText()+"'"  +  "\n" +
+                    "where cl.ID_Cliente =" + id + "AND\n" + //00013423: Se hace uso de la variable id declarada arriba como parametro de busqueda
+                    "trns.Fecha_Compra BETWEEN " + "'" + fechaInicioA.getText() + "'" + " and " + "'" + fechaFinA.getText() + "'" + "\n" +
                     "order by trns.Fecha_Compra";
             Statement stmt = conn.createStatement(); ///00013423: Se crea un objeto de tipo statement que ayudara a mandar consultas a la BD
             ResultSet rs = stmt.executeQuery(reporteA); //00013423: Se crea un objeto rs que a su vez ejecuta la consulta a la BD, al metodo .executeQuery se le pasa como parametro la variable string de antes.
@@ -280,7 +277,7 @@ public class HelloController implements Initializable {
                 cliente.setNombre(rs.getString("Nombre")); //00013423: Define los valores de la variable nombre, pasando como parametro el nombre de la columna de la BD
                 cliente.setMonto(rs.getDouble("Monto Total")); //00013423: Define los valores de la variable monto, pasando como parametro el nombre de la columna de la BD
                 cliente.setFechaCompra(rs.getString("Fecha de Compra")); //00013423: Define los valores de la variable fechaCompra, pasando como parametro el nombre de la columna de la BD
-                Cliente client = new Cliente(cliente.getID_Cliente(),cliente.getNombre(),cliente.getMonto(),cliente.getFechaCompra()); //00013423: Se hace uso del metodo Constructor creado especificamente para la consulta A
+                Cliente client = new Cliente(cliente.getID_Cliente(), cliente.getNombre(), cliente.getMonto(), cliente.getFechaCompra()); //00013423: Se hace uso del metodo Constructor creado especificamente para la consulta A
                 clientes.add(client); //00013423: Se añaden los resultados a la lista que se le pasara como parametro al metodo .setItems(clientes) en el boton onGenerarReporteAButtonClick
             }
         } catch (Exception e) { //00013423: Control para el manejo de excepciones
@@ -289,16 +286,16 @@ public class HelloController implements Initializable {
         return clientes; //00013423: Retorna los elementos en la lista
     }
 
-    public void generarReporteA(File file){
+    public void generarReporteA(File file) {
         ObservableList<Cliente> datos = getClientes(); //00013423: Carga los datos de la lista
-        if (!file.exists()){ //00013423: Verifica si existe el archivo
+        if (!file.exists()) { //00013423: Verifica si existe el archivo
             try {
                 FileWriter writer = new FileWriter(file); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
-                for(Cliente cliente : datos){ //00013423: ciclo for que permitira recorrer los elementos de la lista.
+                for (Cliente cliente : datos) { //00013423: ciclo for que permitira recorrer los elementos de la lista.
                     String info = "ID: " + cliente.getID_Cliente() //0013423: variable que ira guardando los datos de la lista a medida que realiza iteraciones
-                            +"    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
-                            +"    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
-                            +"    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
+                            + "    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
+                            + "    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
+                            + "    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
                     writer.write(info); //00013423: metodo de la instancia writer que escribira los datos correspondientes a cada iteracion
                 }
                 writer.close(); //00013423: Cierra el flujo de escritura en el archivo reporteA
@@ -307,12 +304,12 @@ public class HelloController implements Initializable {
             }
         } else {
             try {
-                FileWriter writer = new FileWriter(file,true); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
-                for(Cliente cliente : datos){ //00013423: ciclo for que permitira recorrer los elementos de la lista.
+                FileWriter writer = new FileWriter(file, true); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
+                for (Cliente cliente : datos) { //00013423: ciclo for que permitira recorrer los elementos de la lista.
                     String info = "ID: " + cliente.getID_Cliente() //0013423: variable que ira guardando los datos de la lista a medida que realiza iteraciones
-                            +"    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
-                            +"    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
-                            +"    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
+                            + "    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
+                            + "    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
+                            + "    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
                     writer.write(info); //00013423: metodo de la instancia writer que escribira los datos correspondientes a cada iteracion
                 }
                 writer.close(); //00013423: Cierra el flujo de escritura en el archivo reporteA
@@ -324,29 +321,41 @@ public class HelloController implements Initializable {
 
     //00085720 Genera reporte D
     private void generarReporteD(String facilitador) {
+        //00085720: Cargando el controlador para la base de datos
         try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); //00085720: Cargando el controlador para la base de datos
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; //00085720 Variable String la cual se inicializa con la URL de la conexion a la BD
-            String user = "poo"; //00085720
-            String password = "ParcialFinal"; //00085720
-            Connection connection = DriverManager.getConnection(url, user, password);
-            Statement statement = connection.createStatement();
-            String query = "SELECT c.ID, c.nombre FROM Cliente c WHERE c.facilitador = '" + facilitador + "'"; //00085720 Se hace la consulta a la base de datos
-            ResultSet resultSet = statement.executeQuery(query); //00085720
-            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteD.txt"); //0008572 Se crea un archivo file en la ruta actual, con el nombre ReporteD.txt
-            try (FileWriter writer = new FileWriter(file)) { //00085720 Se crea una instancia de la clase FileWriter que permitira escribir en el archivo de nombre ReporteD.txt
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Error al cargar el controlador de la base de datos.");
+            return;
+        }
+
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; //00085720 Variable String la cual se inicializa con la URL de la conexion a la BD
+        String user = "poo"; //00085720usuario
+        String password = "ParcialFinal"; //00085720password
+
+        // 00085720 Try para saber que se cierra correctamente
+        try (Connection connection = DriverManager.getConnection(url, user, password);
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "SELECT c.ID, c.nombre FROM Cliente c WHERE c.facilitador = ?"); //00085720 Se hace la consulta a la base de datos
+             FileWriter writer = new FileWriter(
+                     new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteD.txt"))) { //0008572 Se crea un archivo file en la ruta actual, con el nombre ReporteD.txt
+
+            preparedStatement.setString(1, facilitador); //00085720 facilitador parametro
+            try (ResultSet resultSet = preparedStatement.executeQuery()) { //00085720
                 while (resultSet.next()) { //00085720 Mientras resultSet.next() sea verdadero, se ira iterando sobre los resultados de la consulta
                     int id = resultSet.getInt("ID"); //00085720 Mientras resultSet.getInt("") se recupera el id del cliente
                     String nombre = resultSet.getString("nombre"); //00085720 Mientras resultSet.getString("") se recupera el nombre del cliente
                     writer.write("ID: " + id + ", Nombre: " + nombre + "\n"); //00085720 Se escribe en el archivo el ID y el nombre del cliente
                 }
             }
-            resultSet.close();
-            statement.close();
-            connection.close();
             showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Reporte generado con exito");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Error en la conexion a la base de datos.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Error al escribir en el archivo.");
         }
     }
 }

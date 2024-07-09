@@ -1,4 +1,3 @@
-
 package EntidadesBD;
 
 public class Transaccion {

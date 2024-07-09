@@ -1,4 +1,3 @@
-
 package EntidadesBD;
 
 public class Cliente {
@@ -74,7 +73,7 @@ public class Cliente {
         this.fechaCompra = fechaCompra;
     }
     public int getCantidadCompras() {
-    return cantidadCompras;
+        return cantidadCompras;
     }
 
     public void setCantidadCompras(int cantidadCompras) {
