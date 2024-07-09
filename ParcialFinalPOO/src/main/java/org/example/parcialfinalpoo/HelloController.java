@@ -49,7 +49,7 @@ public class HelloController implements Initializable {
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description")); // 00085720 Configura la columna 'descriptionColumn'
         facilitadorColumn.setCellValueFactory(new PropertyValueFactory<>("facilitador")); // 00085720 Configura la columna 'facilitadorColumn'
         dataTableView.setItems(itemList); // 00085720 Vincular la lista a la tabla
-        connectToDatabase(); // Inicializar la conexión a la base de datos
+        connectToDatabase(); //00085720 Inicializar la conexión a la base de datos
     }
     ObservableList<String> facilitadores = FXCollections.observableArrayList(
             "Visa", "MasterCard", "American Express"
