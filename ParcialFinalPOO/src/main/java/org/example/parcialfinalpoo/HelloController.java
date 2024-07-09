@@ -4,12 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
@@ -39,6 +35,8 @@ public class HelloController implements Initializable {
     private TableColumn<Item, String> descriptionColumn; // 00085720 Columna para la descripción
     @FXML
     private TableColumn<Item, String> facilitadorColumn; // 00085720 Columna para el facilitador
+    @FXML
+    private ComboBox<String> cbFacilitador; // 00085720 ComboBox para buscar el facilitador
 
     // 00085720 Lista observable para almacenar los elementos
     private final ObservableList<Item> itemList = FXCollections.observableArrayList();
@@ -53,6 +51,9 @@ public class HelloController implements Initializable {
         dataTableView.setItems(itemList); // 00085720 Vincular la lista a la tabla
         connectToDatabase(); // Inicializar la conexión a la base de datos
     }
+    ObservableList<String> facilitadores = FXCollections.observableArrayList(
+            "Visa", "MasterCard", "American Express"
+    ); // 00085720 Lista de facilitadores
 
     // 00085720 Metodo para crear un nuevo elemento
     @FXML
@@ -191,7 +192,7 @@ public class HelloController implements Initializable {
     private void onGenerarReporteDButtonClick(ActionEvent event) {
         // 00085720 Codigo para generar reporte D
         ReporteD reporteD = new ReporteD();
-        reporteD.generateReport(); // Llamar al metodo para generar el reporte D
+        reporteD.crearReporteD(); // Llamar al metodo para generar el reporte D
         showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Reporte D generado correctamente.");
     }
 
@@ -208,3 +209,4 @@ public class HelloController implements Initializable {
         }
     }
 }
+
