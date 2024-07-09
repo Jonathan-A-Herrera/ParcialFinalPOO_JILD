@@ -11,7 +11,7 @@
   </padding>
   <Tab text="CRUD">
     <AnchorPane>
-      <VBox spacing="10">
+      <VBox prefHeight="547.0" prefWidth="614.0" spacing="10">
         <padding>
           <Insets bottom="10" left="10" right="10" top="10" />
         </padding>
@@ -28,16 +28,21 @@
           <TextField fx:id="descriptionField" />
         </HBox>
         <HBox spacing="10">
+          <Label text="Facilitador:" />
+          <TextField fx:id="facilitadorField" />
+        </HBox>
+        <HBox spacing="10">
           <Button onAction="#create" text="Crear" />
           <Button onAction="#read" text="Consultar" />
           <Button onAction="#update" text="Actualizar" />
           <Button onAction="#delete" text="Eliminar" />
         </HBox>
-        <TableView fx:id="dataTableView" prefHeight="400.0" prefWidth="276.0">
+        <TableView fx:id="dataTableView" prefHeight="347.0" prefWidth="632.0">
           <columns>
-            <TableColumn fx:id="idColumn" text="ID" />
-            <TableColumn fx:id="nameColumn" text="Nombre" />
-            <TableColumn fx:id="descriptionColumn" text="Descripción" />
+            <TableColumn fx:id="idColumn" prefWidth="106.99999463558197" text="ID" />
+            <TableColumn fx:id="nameColumn" prefWidth="208.00003814697266" text="Nombre" />
+            <TableColumn fx:id="descriptionColumn" minWidth="0.0" prefWidth="136.0" text="Descripción" />
+            <TableColumn fx:id="facilitadorColumn" prefWidth="142.199951171875" text="Facilitador" />
           </columns>
         </TableView>
       </VBox>
