@@ -61,10 +61,10 @@ public class Tarjeta {
     }
 
     public String getNumeroTarjetaCensurado() {
-        if (numeroTarjeta.length() > 4) {
-            return "**** **** **** " + numeroTarjeta.substring(numeroTarjeta.length() - 4);
+        if (numeroTarjeta.length() > 4) { //00379823: Condicion para poder ocultar los digitos de la tarjeta tomando en cuenta la longuitud de digitos
+            return "**** **** **** " + numeroTarjeta.substring(numeroTarjeta.length() - 4); //00379823: Devuelve los primeros 12 dígitos y los oculta con * y solo muestra los ultimos 4
         } else {
-            return numeroTarjeta; // En caso de que el número de tarjeta tenga menos de 4 dígitos
+            return numeroTarjeta; // 00379823: En caso de que el número de tarjeta tenga menos de 4 dígitos
         }
     }
 }
