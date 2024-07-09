@@ -91,6 +91,7 @@ public class HelloController implements Initializable {
             // 00085720 Mostrar los datos en los campos de texto
             nameField.setText(item.getName()); // 00085720 Asigna el nombre del elemento al campo de texto
             descriptionField.setText(item.getDescription()); // 00085720 Asigna la descripcion del elemento
+            facilitadorField.setText(item.getFacilitador()); // 00085720 Asigna el facilitador del elemento al campo de texto
         } else { // 00085720 Si no
             showAlert(Alert.AlertType.INFORMATION, "Informacion", "Elemento no encontrado."); // 00085720 muestra alerta
         }
