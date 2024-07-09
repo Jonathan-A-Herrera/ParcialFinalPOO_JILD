@@ -10,7 +10,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -27,11 +26,9 @@ public class HelloController implements Initializable {
     @FXML
     private TextField nameField; // 00085720 Campo de texto para el nombre
     @FXML
-
     private TextField descriptionField; // 00085720 Campo de texto para la descripción
 
     private TableView reporteTableViewA;
-
 
     // 00085720 Tabla y sus columnas para mostrar los datos
     @FXML
@@ -46,14 +43,14 @@ public class HelloController implements Initializable {
     // 00085720 Lista observable para almacenar los elementos
     private final ObservableList<Item> itemList = FXCollections.observableArrayList();
 
-    // 00085720 Metodo que se llama al inicializar el controlador
-    @FXML
-    public void initialize() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         // Configurar las columnas de la tabla
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id")); // 00085720 Configura la columna 'idColumn'
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name")); // 00085720 Configura la columna 'nameColumn'
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description")); // 00085720 Configura la columna 'descriptionColumn'
         dataTableView.setItems(itemList); // 00085720 Vincular la lista a la tabla
+        connectToDatabase(); // Inicializar la conexión a la base de datos
     }
 
     //00085720 Metodo para crear un nuevo elemento
@@ -80,9 +77,7 @@ public class HelloController implements Initializable {
     @FXML
     private void read() {
         String id = idField.getText(); // 00085720 Obtener el ID del campo de texto
-
-        // 00085720 Validar que el campo de ID no este vacío
-        if (id.isEmpty()) {
+        if (id.isEmpty()) { // 00085720 Validar que el campo de ID no este vacío
             showAlert(Alert.AlertType.ERROR, "Error", "ID es obligatorio."); //00085720 muestra alerta
             return;
         }
@@ -93,7 +88,7 @@ public class HelloController implements Initializable {
             // 00085720 Mostrar los datos en los campos de texto
             nameField.setText(item.getName()); //00085720 Asigna el nombre del elemento al campo de texto
             descriptionField.setText(item.getDescription()); //00085720 Asigna la descripcion del elemento
-        } else {
+        } else { //00085720 Si no
             showAlert(Alert.AlertType.INFORMATION, "Informacion", "Elemento no encontrado."); // 00085720 muestra alerta
         }
     }
@@ -106,7 +101,7 @@ public class HelloController implements Initializable {
         String name = nameField.getText(); // 00085720 Obtiene el texto del campo 'nameField' y lo almacena en la variable 'name'
         String description = descriptionField.getText(); // 00085720 Obtiene el texto del campo 'description' y lo almacena en la variable 'description'
 
-        // Validar que todos los campos esten llenos
+        // 00085720 Validar que todos los campos esten llenos
         if (id.isEmpty() || name.isEmpty() || description.isEmpty()) { // 00085720 Si id, name o description estan vacios
             showAlert(Alert.AlertType.ERROR, "Error", "Todos los campos son obligatorios."); // 00085720 Mostrar alerta
             return;
@@ -129,15 +124,12 @@ public class HelloController implements Initializable {
     @FXML
     private void delete() {
         String id = idField.getText(); // 00085720 Obtener el ID del campo de texto
-
-        // Validar que el campo de ID no este vacío
+        //00085720 Validar que el campo de ID no este vacío
         if (id.isEmpty()) { //00085720 Si id esta vacio
             showAlert(Alert.AlertType.ERROR, "Error", "ID es obligatorio."); // 00085720 Mostrar alerta
             return;
         }
-
-        // 00085720 Buscar el elemento por su ID
-        Item item = findItemById(id);
+        Item item = findItemById(id); // 00085720 Buscar el elemento por su ID
         if (item != null) { // 00085720 Item diferente a nulo
             itemList.remove(item); //00085720 Eliminar el elemento de la lista
             clearFields(); // 00085720 Limpiar los campos de texto
@@ -172,7 +164,6 @@ public class HelloController implements Initializable {
     }
 
     // 00085720 Metodos para generar reportes
-
     @FXML
     private void onGenerarReporteAButtonClick(ActionEvent event) {
         // 00085720 Codigo para generar reporte A
@@ -194,31 +185,21 @@ public class HelloController implements Initializable {
     @FXML
     private void onGenerarReporteDButtonClick(ActionEvent event) {
         // 00085720 Codigo para generar reporte D
+        ReporteD reporteD = new ReporteD();
+        reporteD.generateReport(); // Llamar al metodo para generar el reporte D
         showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Generar Reporte D");
     }
 
-    @FXML
-    private void onGenerarReporteEButtonClick(ActionEvent event) {
-        // 00085720 Codigo para generar reporte E
-        showAlert(Alert.AlertType.INFORMATION, "Reporte E", "Generar Reporte E");
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-       connectToDatabase();
-    }
-
-    public void connectToDatabase(){ //00013423: Creando una funcion para establecer conexion con la base de datos
+    public void connectToDatabase() { //00013423: Creando una funcion para establecer conexion con la base de datos
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); //00013423: Cargando el controlador para la base de datos
             String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; //00013423: Variable String la cual se inicializa con la URL de la conexion a la BD
             String user = "poo"; //00013423: Usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
             String password = "ParcialFinal"; //00013423: Contraseña del usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
-            Connection conn = DriverManager.getConnection(url,user,password); //00013423: Estableciendo conexion con la base de datos
+            Connection conn = DriverManager.getConnection(url, user, password); //00013423: Estableciendo conexion con la base de datos
             System.out.println("Se establecio la conexion correctamente"); //00013423: Mensaje para saber si la conexion se establecio correctamente
-        } catch (Exception e){ //00013423: Control para el manejo de excepciones
+        } catch (Exception e) { //00013423: Control para el manejo de excepciones
             e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
         }
     }
-
 }
