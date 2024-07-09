@@ -1,5 +1,8 @@
 package org.example.parcialfinalpoo;
 
+import EntidadesBD.Cliente;
+import EntidadesBD.Tarjeta;
+import EntidadesBD.Transaccion;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,12 +13,19 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ResourceBundle;
 
 public class HelloController implements Initializable {
@@ -26,9 +36,24 @@ public class HelloController implements Initializable {
     @FXML
     private TextField nameField; // 00085720 Campo de texto para el nombre
     @FXML
-    private TextField descriptionField; // 00085720 Campo de texto para la descripción
 
-    private TableView reporteTableViewA;
+    private TextField descriptionField; // 00085720 Campo de texto para la descripción
+    @FXML
+    private TextField idClienteA; //00013423: Campo de texto que guardara el id del cliente a buscar
+    @FXML
+    private TextField fechaInicioA; //00013423: Fecha de inicio de la busqueda de compras
+    @FXML
+    private TextField fechaFinA; //00013423: Fecha de fin de la busqueda de compras
+    @FXML
+    private TableView<Cliente> reporteTableViewA; //00013423: Table view usada para el reporte A
+    @FXML
+    private TableColumn<Cliente, Integer> idColumnA; //00013423: Columna de la TVA que contiene el id del cliente
+    @FXML
+    private TableColumn<Cliente, String> idNameA; //00013423: Columna de la TVA que contiene el nombre del cliente
+    @FXML
+    private TableColumn<Cliente, Double> idMontoA; //00013423: Columna de la TVA que contiene el monto de la compra del cliente
+    @FXML
+    private TableColumn<Cliente, String> idFechaCompraA; //00013423: Columna de la TVA que contiene la fecha en la que se realizo la compra
 
     // 00085720 Tabla y sus columnas para mostrar los datos
     @FXML
@@ -43,14 +68,21 @@ public class HelloController implements Initializable {
     // 00085720 Lista observable para almacenar los elementos
     private final ObservableList<Item> itemList = FXCollections.observableArrayList();
 
+    // 00085720 Metodo que se llama al inicializar el controlador
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        connectToDatabase();
         // Configurar las columnas de la tabla
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id")); // 00085720 Configura la columna 'idColumn'
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name")); // 00085720 Configura la columna 'nameColumn'
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description")); // 00085720 Configura la columna 'descriptionColumn'
         dataTableView.setItems(itemList); // 00085720 Vincular la lista a la tabla
-        connectToDatabase(); // Inicializar la conexión a la base de datos
+
+        //00013423: Configurar las columnas de la tabla de reporte
+        idColumnA.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente")); //00013423: Configura la columna id
+        idNameA.setCellValueFactory(new PropertyValueFactory<>("nombre")); //00013423: Configura la columna de nombre
+        idMontoA.setCellValueFactory(new PropertyValueFactory<>("monto")); //00013423: Configura la columna del monto total de la compra
+        idFechaCompraA.setCellValueFactory(new PropertyValueFactory<>("fechaCompra")); //00013423: //00013423: Configura la columna con la fecha de la compra
     }
 
     //00085720 Metodo para crear un nuevo elemento
@@ -77,7 +109,9 @@ public class HelloController implements Initializable {
     @FXML
     private void read() {
         String id = idField.getText(); // 00085720 Obtener el ID del campo de texto
-        if (id.isEmpty()) { // 00085720 Validar que el campo de ID no este vacío
+
+        // 00085720 Validar que el campo de ID no este vacío
+        if (id.isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Error", "ID es obligatorio."); //00085720 muestra alerta
             return;
         }
@@ -88,7 +122,7 @@ public class HelloController implements Initializable {
             // 00085720 Mostrar los datos en los campos de texto
             nameField.setText(item.getName()); //00085720 Asigna el nombre del elemento al campo de texto
             descriptionField.setText(item.getDescription()); //00085720 Asigna la descripcion del elemento
-        } else { //00085720 Si no
+        } else {
             showAlert(Alert.AlertType.INFORMATION, "Informacion", "Elemento no encontrado."); // 00085720 muestra alerta
         }
     }
@@ -101,7 +135,7 @@ public class HelloController implements Initializable {
         String name = nameField.getText(); // 00085720 Obtiene el texto del campo 'nameField' y lo almacena en la variable 'name'
         String description = descriptionField.getText(); // 00085720 Obtiene el texto del campo 'description' y lo almacena en la variable 'description'
 
-        // 00085720 Validar que todos los campos esten llenos
+        // Validar que todos los campos esten llenos
         if (id.isEmpty() || name.isEmpty() || description.isEmpty()) { // 00085720 Si id, name o description estan vacios
             showAlert(Alert.AlertType.ERROR, "Error", "Todos los campos son obligatorios."); // 00085720 Mostrar alerta
             return;
@@ -124,12 +158,15 @@ public class HelloController implements Initializable {
     @FXML
     private void delete() {
         String id = idField.getText(); // 00085720 Obtener el ID del campo de texto
-        //00085720 Validar que el campo de ID no este vacío
+
+        // Validar que el campo de ID no este vacío
         if (id.isEmpty()) { //00085720 Si id esta vacio
             showAlert(Alert.AlertType.ERROR, "Error", "ID es obligatorio."); // 00085720 Mostrar alerta
             return;
         }
-        Item item = findItemById(id); // 00085720 Buscar el elemento por su ID
+
+        // 00085720 Buscar el elemento por su ID
+        Item item = findItemById(id);
         if (item != null) { // 00085720 Item diferente a nulo
             itemList.remove(item); //00085720 Eliminar el elemento de la lista
             clearFields(); // 00085720 Limpiar los campos de texto
@@ -163,32 +200,46 @@ public class HelloController implements Initializable {
         alert.showAndWait(); // 00085720 Mostrar la alerta y esperar a que se cierre
     }
 
-    // 00085720 Metodos para generar reportes
+    // Metodos para generar reportes
+
     @FXML
-    private void onGenerarReporteAButtonClick(ActionEvent event) {
-        // 00085720 Codigo para generar reporte A
-        showAlert(Alert.AlertType.INFORMATION, "Reporte A", "Generar Reporte A");
+    private void onGenerarReporteAButtonClick(ActionEvent event) { //00013423: Boton que genera el reporte A
+        if (idClienteA.getText().isEmpty() || fechaInicioA.getText().isEmpty() || fechaFinA.getText().isEmpty()){ //00013423: Mostrara una alerta en caso de que no se haya llenado uno de estos campos
+            showAlert(Alert.AlertType.WARNING,"Fallo","Llene todos los campos"); //00013423: Mostrara una alerta
+        } else {
+            ObservableList<Cliente> datos = getClientes(); //00013423: Se instancia un objeto datos que guardara la lista de clientes que retorna el netodo getClientes();
+            reporteTableViewA.setItems(datos); //00013423: Mostrara los datos en el TableViewA del reporte A en sus casillas correspondientes.
+            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/","ReporteA.txt"); //00013423: Se crea un archivo file en la ruta actual, con el nombre ReporteA.txt
+            generarReporteA(file); //00013423: Se llama al metodo que genera los reportes de la consulta A
+        }
     }
+
+
 
     @FXML
     private void onGenerarReporteBButtonClick(ActionEvent event) {
-        // 00085720 Codigo para generar reporte B
+        // Codigo para generar reporte B
         showAlert(Alert.AlertType.INFORMATION, "Reporte B", "Generar Reporte B");
     }
 
     @FXML
     private void onGenerarReporteCButtonClick(ActionEvent event) {
-        // 00085720Codigo para generar reporte C
+        // Codigo para generar reporte C
         showAlert(Alert.AlertType.INFORMATION, "Reporte C", "Generar Reporte C");
     }
 
     @FXML
     private void onGenerarReporteDButtonClick(ActionEvent event) {
-        // 00085720 Codigo para generar reporte D
-        ReporteD reporteD = new ReporteD();
-        reporteD.generateReport(); // Llamar al metodo para generar el reporte D
+        // Codigo para generar reporte D
         showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Generar Reporte D");
     }
+
+    @FXML
+    private void onGenerarReporteEButtonClick(ActionEvent event) {
+        // Codigo para generar reporte E
+        showAlert(Alert.AlertType.INFORMATION, "Reporte E", "Generar Reporte E");
+    }
+
 
     public void connectToDatabase() { //00013423: Creando una funcion para establecer conexion con la base de datos
         try {
@@ -202,4 +253,71 @@ public class HelloController implements Initializable {
             e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
         }
     }
+
+    public ObservableList<Cliente> getClientes() { //00013423: Crea metodo que devolvera una lista de instancias de la clase Cliente
+        ObservableList<Cliente> clientes = FXCollections.observableArrayList(); //00013423: Crea una lista que se usara para guardar los valores que iran en el TableViewA
+        try {
+            int id = Integer.parseInt(idClienteA.getText()); //00013423: Linea que convierte el valor del campo ID en un entero
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); //00013423: Cargando el controlador para la base de datos
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; //00013423: Variable String la cual se inicializa con la URL de la conexion a la BD
+            String user = "poo"; //00013423: Usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
+            String password = "ParcialFinal"; //00013423: Contraseña del usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
+            Connection conn = DriverManager.getConnection(url, user, password); //00013423: Estableciendo conexion con la base de datos
+            String reporteA = "SELECT cl.ID_Cliente, cl.Nombre, trns.Monto_Total as 'Monto Total', trns.Fecha_Compra as 'Fecha de compra' from Cliente cl\n" +
+                    "inner join Tarjeta trj ON trj.ID_Cliente = cl.ID_Cliente\n" +
+                    "inner join Transacción trns ON trns.Número_Tarjeta = trj.Número_Tarjeta\n" +
+                    "where cl.ID_Cliente =" + id +  "AND\n" + //00013423: Se hace uso de la variable id declarada arriba como parametro de busqueda
+                    "trns.Fecha_Compra BETWEEN " + "'"+fechaInicioA.getText()+"'" + " and " + "'"+fechaFinA.getText()+"'"  +  "\n" +
+                    "order by trns.Fecha_Compra";
+            Statement stmt = conn.createStatement(); ///00013423: Se crea un objeto de tipo statement que ayudara a mandar consultas a la BD
+            ResultSet rs = stmt.executeQuery(reporteA); //00013423: Se crea un objeto rs que a su vez ejecuta la consulta a la BD, al metodo .executeQuery se le pasa como parametro la variable string de antes.
+            while (rs.next()) { //00013423: Mientras rs.next() sea verdadero, se ira iterando sobre los resultados de la consulta
+                Cliente cliente = new Cliente(); //00013423: Crea una instancia de cliente
+                cliente.setID_Cliente(rs.getInt("ID_Cliente")); //00013423: Define los valores de la variable ID_Cliente, pasando como parametro el nombre de la columna de la BD
+                cliente.setNombre(rs.getString("Nombre")); //00013423: Define los valores de la variable nombre, pasando como parametro el nombre de la columna de la BD
+                cliente.setMonto(rs.getDouble("Monto Total")); //00013423: Define los valores de la variable monto, pasando como parametro el nombre de la columna de la BD
+                cliente.setFechaCompra(rs.getString("Fecha de Compra")); //00013423: Define los valores de la variable fechaCompra, pasando como parametro el nombre de la columna de la BD
+                Cliente client = new Cliente(cliente.getID_Cliente(),cliente.getNombre(),cliente.getMonto(),cliente.getFechaCompra()); //00013423: Se hace uso del metodo Constructor creado especificamente para la consulta A
+                clientes.add(client); //00013423: Se añaden los resultados a la lista que se le pasara como parametro al metodo .setItems(clientes) en el boton onGenerarReporteAButtonClick
+            }
+        } catch (Exception e) { //00013423: Control para el manejo de excepciones
+            e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+        }
+        return clientes; //00013423: Retorna los elementos en la lista
+    }
+
+    public void generarReporteA(File file){
+        ObservableList<Cliente> datos = getClientes(); //00013423: Carga los datos de la lista
+        if (!file.exists()){ //00013423: Verifica si existe el archivo
+            try {
+                FileWriter writer = new FileWriter(file); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
+                for(Cliente cliente : datos){ //00013423: ciclo for que permitira recorrer los elementos de la lista.
+                    String info = "ID: " + cliente.getID_Cliente() //0013423: variable que ira guardando los datos de la lista a medida que realiza iteraciones
+                            +"    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
+                            +"    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
+                            +"    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
+                    writer.write(info); //00013423: metodo de la instancia writer que escribira los datos correspondientes a cada iteracion
+                }
+                writer.close(); //00013423: Cierra el flujo de escritura en el archivo reporteA
+            } catch (Exception e) {
+                e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+            }
+        } else {
+            try {
+                FileWriter writer = new FileWriter(file,true); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
+                for(Cliente cliente : datos){ //00013423: ciclo for que permitira recorrer los elementos de la lista.
+                    String info = "ID: " + cliente.getID_Cliente() //0013423: variable que ira guardando los datos de la lista a medida que realiza iteraciones
+                            +"    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
+                            +"    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
+                            +"    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
+                    writer.write(info); //00013423: metodo de la instancia writer que escribira los datos correspondientes a cada iteracion
+                }
+                writer.close(); //00013423: Cierra el flujo de escritura en el archivo reporteA
+            } catch (Exception e) { //00013423: Control para el manejo de excepciones
+                e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+            }
+        }
+    }
+
+
 }
