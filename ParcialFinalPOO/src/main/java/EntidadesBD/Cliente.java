@@ -11,6 +11,12 @@ public class Cliente {
 
     public Cliente() {} //00013423: Constructor vacio para la instanciacion de objetos sin inicializar sus variables
 
+    // 00085720 Constructor de la clase Cliente
+    public Cliente(int id, String nombre, int cantidadCompras) {
+        this.ID_Cliente = id;
+        this.nombre = nombre;
+        this.cantidadCompras = cantidadCompras;
+    }
     public Cliente(int ID_Cliente, String nombre, String direccion, String telefono,double monto, String fechaCompra) { ///00013423: Constructor para crear una instancia con sus variables inicializadas
         this.ID_Cliente = ID_Cliente;
         this.nombre = nombre;
