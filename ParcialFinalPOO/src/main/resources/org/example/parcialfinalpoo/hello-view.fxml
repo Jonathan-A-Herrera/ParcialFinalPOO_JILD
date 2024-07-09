@@ -5,7 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<TabPane xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.parcialfinalpoo.HelloController">
+<TabPane xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.parcialfinalpoo.HelloController">
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
   </padding>
@@ -29,11 +29,11 @@
         </HBox>
         <HBox spacing="10">
           <Button onAction="#create" text="Crear" />
-          <Button onAction="#read" text="Leer" />
+          <Button onAction="#read" text="Consultar" />
           <Button onAction="#update" text="Actualizar" />
           <Button onAction="#delete" text="Eliminar" />
         </HBox>
-        <TableView fx:id="dataTableView">
+        <TableView fx:id="dataTableView" prefHeight="400.0" prefWidth="276.0">
           <columns>
             <TableColumn fx:id="idColumn" text="ID" />
             <TableColumn fx:id="nameColumn" text="Nombre" />

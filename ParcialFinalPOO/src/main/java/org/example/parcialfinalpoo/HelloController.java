@@ -171,38 +171,37 @@ public class HelloController implements Initializable {
         alert.showAndWait(); // 00085720 Mostrar la alerta y esperar a que se cierre
     }
 
-    // Metodos para generar reportes
+    // 00085720 Metodos para generar reportes
 
     @FXML
     private void onGenerarReporteAButtonClick(ActionEvent event) {
-        // Codigo para generar reporte A
+        // 00085720 Codigo para generar reporte A
         showAlert(Alert.AlertType.INFORMATION, "Reporte A", "Generar Reporte A");
     }
 
     @FXML
     private void onGenerarReporteBButtonClick(ActionEvent event) {
-        // Codigo para generar reporte B
+        // 00085720 Codigo para generar reporte B
         showAlert(Alert.AlertType.INFORMATION, "Reporte B", "Generar Reporte B");
     }
 
     @FXML
     private void onGenerarReporteCButtonClick(ActionEvent event) {
-        // Codigo para generar reporte C
+        // 00085720Codigo para generar reporte C
         showAlert(Alert.AlertType.INFORMATION, "Reporte C", "Generar Reporte C");
     }
 
     @FXML
     private void onGenerarReporteDButtonClick(ActionEvent event) {
-        // Codigo para generar reporte D
+        // 00085720 Codigo para generar reporte D
         showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Generar Reporte D");
     }
 
     @FXML
     private void onGenerarReporteEButtonClick(ActionEvent event) {
-        // Codigo para generar reporte E
+        // 00085720 Codigo para generar reporte E
         showAlert(Alert.AlertType.INFORMATION, "Reporte E", "Generar Reporte E");
     }
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -223,4 +222,3 @@ public class HelloController implements Initializable {
     }
 
 }
-
