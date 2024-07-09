@@ -147,9 +147,9 @@
       </HBox>
       <TableView fx:id="reporteTableViewC" prefHeight="200.0" prefWidth="450.0">
         <columns>
-          <TableColumn prefWidth="159.19997787475586" text="ID Tarjeta" />
-          <TableColumn prefWidth="119.20002746582031" text="Tipo" />
-          <TableColumn prefWidth="220.79998779296875" text="Fecha de Expiración" />
+          <TableColumn fx:id="numTarjetaC" prefWidth="159.19997787475586" text="ID Tarjeta" />
+          <TableColumn fx:id="tipoTarjetaC" prefWidth="119.20002746582031" text="Tipo" />
+          <TableColumn fx:id="fechaExpTarjetaC" prefWidth="220.79998779296875" text="Fecha de Expiración" />
         </columns>
       </TableView>
     </VBox>
