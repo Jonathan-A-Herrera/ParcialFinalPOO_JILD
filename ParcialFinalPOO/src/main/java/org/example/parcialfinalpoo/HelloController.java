@@ -55,6 +55,12 @@ public class HelloController implements Initializable {
     @FXML
     private TableColumn<Cliente, String> idFechaCompraA; //00013423: Columna de la TVA que contiene la fecha en la que se realizo la compra
 
+    @FXML 
+    private TextField idClienteC; //00379823: Campo de texto que va a almacenar el id del cliente a buscar
+    @FXML
+    private TableView<Tarjeta> reporteTableViewC; //00379823: Table view usada para el reporte C
+
+
     // 00085720 Tabla y sus columnas para mostrar los datos
     @FXML
     private TableView<Item> dataTableView; // 00085720 Tabla para mostrar los elementos
