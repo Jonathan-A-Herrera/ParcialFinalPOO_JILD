@@ -209,40 +209,12 @@ public class HelloController implements Initializable {
         } else {
             ObservableList<Cliente> datos = getClientes(); //00013423: Se instancia un objeto datos que guardara la lista de clientes que retorna el netodo getClientes();
             reporteTableViewA.setItems(datos); //00013423: Mostrara los datos en el TableViewA del reporte A en sus casillas correspondientes.
-            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/","ReporteA.txt");
-            if (!file.exists()){
-                try {
-                    FileWriter writer = new FileWriter(file,true);
-                    for(Cliente cliente : datos){
-                        String info = "ID: " + cliente.getID_Cliente()
-                                      +"    Nombre: " + cliente.getNombre()
-                                      +"    Monto total: " + cliente.getMonto()
-                                      +"    Fecha de compra: " + cliente.getFechaCompra() + "\n";
-                        writer.write(info);
-                    }
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    FileWriter writer = new FileWriter(file,true);
-                    for(Cliente cliente : datos){
-                        String info = "ID: " + cliente.getID_Cliente()
-                                +"    Nombre: " + cliente.getNombre()
-                                +"    Monto total: " + cliente.getMonto()
-                                +"    Fecha de compra: " + cliente.getFechaCompra() + "\n";
-                        writer.write(info);
-                    }
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/","ReporteA.txt"); //00013423: Se crea un archivo file en la ruta actual, con el nombre ReporteA.txt
+            generarReporteA(file); //00013423: Se llama al metodo que genera los reportes de la consulta A
         }
     }
 
-    //public void writeReportA(File file){}
+
 
     @FXML
     private void onGenerarReporteBButtonClick(ActionEvent event) {
@@ -312,6 +284,39 @@ public class HelloController implements Initializable {
             e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
         }
         return clientes; //00013423: Retorna los elementos en la lista
+    }
+
+    public void generarReporteA(File file){
+        ObservableList<Cliente> datos = getClientes(); //00013423: Carga los datos de la lista
+        if (!file.exists()){ //00013423: Verifica si existe el archivo
+            try {
+                FileWriter writer = new FileWriter(file); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
+                for(Cliente cliente : datos){ //00013423: ciclo for que permitira recorrer los elementos de la lista.
+                    String info = "ID: " + cliente.getID_Cliente() //0013423: variable que ira guardando los datos de la lista a medida que realiza iteraciones
+                            +"    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
+                            +"    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
+                            +"    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
+                    writer.write(info); //00013423: metodo de la instancia writer que escribira los datos correspondientes a cada iteracion
+                }
+                writer.close(); //00013423: Cierra el flujo de escritura en el archivo reporteA
+            } catch (Exception e) {
+                e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+            }
+        } else {
+            try {
+                FileWriter writer = new FileWriter(file,true); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
+                for(Cliente cliente : datos){ //00013423: ciclo for que permitira recorrer los elementos de la lista.
+                    String info = "ID: " + cliente.getID_Cliente() //0013423: variable que ira guardando los datos de la lista a medida que realiza iteraciones
+                            +"    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
+                            +"    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
+                            +"    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
+                    writer.write(info); //00013423: metodo de la instancia writer que escribira los datos correspondientes a cada iteracion
+                }
+                writer.close(); //00013423: Cierra el flujo de escritura en el archivo reporteA
+            } catch (Exception e) { //00013423: Control para el manejo de excepciones
+                e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+            }
+        }
     }
 
 
