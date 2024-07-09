@@ -59,7 +59,11 @@ public class ReporteD {
             Writer writer = new FileWriter(file); // 00085720 Crea un escritor para el archivo
 
             if (rs.isBeforeFirst()) { // 00085720 Verifica si hay resultados en la consulta
-                writer.write("Reporte D\n\n" + "id_cliente\tnombre_completo\tfacilitador\tcantidad_compras\ttotal_gastado\n");
+                writer.write("""
+                        Reporte D
+
+                        id_cliente\tnombre_completo\tfacilitador\tcantidad_compras\ttotal_gastado
+                        """);
                 while (rs.next()) { // 00085720 Itera sobre los resultados de la consulta
                     int clienteId = rs.getInt("cliente_id"); // 00085720 Obtiene el ID del cliente
                     String nombreCompleto = rs.getString("nombre_completo"); // 0085720 Obtiene el nombre completo del cliente
@@ -77,7 +81,7 @@ public class ReporteD {
 
             facilitadorTextField.setText("Reporte creado correctamente"); // 00085720 Muestra un mensaje de exito en la etiqueta
             limpiarD(); // 00085720 limpia los campos de entrada
-            tiempoLabel(facilitadorTextField, 2); // 00085720 Muestra facilitadorTextField por 2 segundos
+            tiempoLabel(facilitadorTextField); // 00085720 Muestra facilitadorTextField por 2 segundos
             System.out.println("Se genero reporte D");
 
             conn.close(); // 00085720 Cierra la conexión a la base de datos
@@ -92,8 +96,8 @@ public class ReporteD {
         cbFacilitador.setValue(null); // 00085720 Limpia el ComboBox del facilitador
     }
 
-    private void tiempoLabel(Label label, int segundos) {
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(segundos), event -> label.setText("")));
+    private void tiempoLabel(Label label) {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(2), event -> label.setText("")));
         timeline.setCycleCount(1);
         timeline.play();
     }

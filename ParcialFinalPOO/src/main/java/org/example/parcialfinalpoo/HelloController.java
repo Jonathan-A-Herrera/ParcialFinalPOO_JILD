@@ -35,8 +35,6 @@ public class HelloController implements Initializable {
     private TableColumn<Item, String> descriptionColumn; // 00085720 Columna para la descripción
     @FXML
     private TableColumn<Item, String> facilitadorColumn; // 00085720 Columna para el facilitador
-    @FXML
-    private ComboBox<String> cbFacilitador; // 00085720 ComboBox para buscar el facilitador
 
     // 00085720 Lista observable para almacenar los elementos
     private final ObservableList<Item> itemList = FXCollections.observableArrayList();

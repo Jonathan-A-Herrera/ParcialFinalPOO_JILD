@@ -2,7 +2,7 @@ package org.example.parcialfinalpoo;
 
 public class Item {
 
-    private String id;
+    private final String id;
     private String name;
     private String description;
     private String facilitador;
@@ -15,22 +15,9 @@ public class Item {
         this.facilitador = facilitador; // 00085720: Asignar el facilitador del ítem
     }
 
-    // 00085720 Constructor con tres parametros para inicializar las variables del item
-    public Item(String id, String name, String description) {
-        this.id = id; // 00085720 Asignar el ID del ítem
-        this.name = name; // 00085720 Asignar el nombre del ítem
-        this.description = description; // 00085720 Asignar la descripcion del item
-        this.facilitador = facilitador; // 00085720 Inicializar el facilitador como vacío
-    }
-
     // 00085720 Obtener el ID del item
     public String getId() {
         return id;
-    }
-
-    // 00085720 Asignar el ID del item
-    public void setId(String id) {
-        this.id = id;
     }
 
     // 00085720 Obtener el nombre del item
