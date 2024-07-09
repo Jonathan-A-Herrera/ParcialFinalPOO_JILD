@@ -1,8 +1,6 @@
 package org.example.parcialfinalpoo;
 
 import EntidadesBD.Cliente;
-import EntidadesBD.Tarjeta;
-import EntidadesBD.Transaccion;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,22 +10,18 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
-
 public class HelloController implements Initializable {
 
     // 00085720 Campos de texto para ingresar datos
@@ -36,7 +30,6 @@ public class HelloController implements Initializable {
     @FXML
     private TextField nameField; // 00085720 Campo de texto para el nombre
     @FXML
-
     private TextField descriptionField; // 00085720 Campo de texto para la descripción
     @FXML
     private TextField idClienteA; //00013423: Campo de texto que guardara el id del cliente a buscar
@@ -54,7 +47,20 @@ public class HelloController implements Initializable {
     private TableColumn<Cliente, Double> idMontoA; //00013423: Columna de la TVA que contiene el monto de la compra del cliente
     @FXML
     private TableColumn<Cliente, String> idFechaCompraA; //00013423: Columna de la TVA que contiene la fecha en la que se realizo la compra
-
+    @FXML
+    private TableView<Cliente> reporteTableViewB;
+    @FXML
+    private TableColumn<Cliente, Integer> idClientesB;
+    @FXML
+    private TableColumn<Cliente, String> idNombreB;
+    @FXML
+    private TableColumn<Cliente, Double> idCompraB;
+    @FXML
+    private TextField idClienteB;
+    @FXML
+    private TextField fechaInicioB;
+    @FXML
+    private TextField fechaFinB;
     // 00085720 Tabla y sus columnas para mostrar los datos
     @FXML
     private TableView<Item> dataTableView; // 00085720 Tabla para mostrar los elementos
@@ -64,10 +70,8 @@ public class HelloController implements Initializable {
     private TableColumn<Item, String> nameColumn; // 00085720 Columna para el nombre
     @FXML
     private TableColumn<Item, String> descriptionColumn; // 00085720 Columna para la descripción
-
     // 00085720 Lista observable para almacenar los elementos
     private final ObservableList<Item> itemList = FXCollections.observableArrayList();
-
     // 00085720 Metodo que se llama al inicializar el controlador
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -83,6 +87,10 @@ public class HelloController implements Initializable {
         idNameA.setCellValueFactory(new PropertyValueFactory<>("nombre")); //00013423: Configura la columna de nombre
         idMontoA.setCellValueFactory(new PropertyValueFactory<>("monto")); //00013423: Configura la columna del monto total de la compra
         idFechaCompraA.setCellValueFactory(new PropertyValueFactory<>("fechaCompra")); //00013423: //00013423: Configura la columna con la fecha de la compra
+
+        idClientesB.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente")); // Configura la columna ID
+        idNombreB.setCellValueFactory(new PropertyValueFactory<>("nombre")); // Configura la columna Nombre
+        idCompraB.setCellValueFactory(new PropertyValueFactory<>("monto")); // Configura la columna Total Gastado
     }
 
     //00085720 Metodo para crear un nuevo elemento
@@ -213,15 +221,38 @@ public class HelloController implements Initializable {
             generarReporteA(file); //00013423: Se llama al metodo que genera los reportes de la consulta A
         }
     }
-
-
-
     @FXML
     private void onGenerarReporteBButtonClick(ActionEvent event) {
-        // Codigo para generar reporte B
-        showAlert(Alert.AlertType.INFORMATION, "Reporte B", "Generar Reporte B");
-    }
+        String idClienteStr = idClienteB.getText(); // Obtener el ID de cliente desde el TextField
+        String mesStr = fechaInicioB.getText(); // Obtener el mes desde el TextField
+        String anioStr = fechaFinB.getText(); // Obtener el año desde el TextField
+        // Validar que todos los campos estén llenos
+        if (idClienteStr.isEmpty() || mesStr.isEmpty() || anioStr.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Fallo", "Llene todos los campos");
+            return;
+        }
 
+        try {
+            int idCliente = Integer.parseInt(idClienteStr); // Convertir el ID de cliente a entero
+            int mes = Integer.parseInt(mesStr); // Convertir el mes a entero
+            int anio = Integer.parseInt(anioStr); // Convertir el año a entero
+
+            // Llamar al método getClientes de ReporteB para obtener los datos del reporte B
+            ReporteB reporteB = new ReporteB();
+            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteB.txt");
+            reporteB.generarReporteB(file, idCliente, mes, anio);
+            ObservableList<Cliente> datos = reporteB.getClientes(idCliente, mes, anio);
+
+            // Mostrar los datos en el TableView
+            reporteTableViewB.setItems(datos);
+
+            // Mostrar mensaje de éxito (opcional)
+            showAlert(Alert.AlertType.INFORMATION, "Éxito", "Reporte B generado y mostrado correctamente");
+
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "ID de cliente, mes y año deben ser números válidos");
+        }
+    }
     @FXML
     private void onGenerarReporteCButtonClick(ActionEvent event) {
         // Codigo para generar reporte C
@@ -318,6 +349,4 @@ public class HelloController implements Initializable {
             }
         }
     }
-
-
 }
