@@ -16,7 +16,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -205,7 +209,25 @@ public class HelloController implements Initializable {
         } else {
             ObservableList<Cliente> datos = getClientes(); //00013423: Se instancia un objeto datos que guardara la lista de clientes que retorna el netodo getClientes();
             reporteTableViewA.setItems(datos); //00013423: Mostrara los datos en el TableViewA del reporte A en sus casillas correspondientes.
-
+            File file = new File("ReporteA");
+            if (!file.exists()){
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt"));
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.dir") + "/src/main/java/Reportes/"));
+                File fileToSave = fileChooser.showSaveDialog(null);
+                if (fileToSave != null){
+                    file = fileToSave;
+                } else{
+                    return;
+                }
+                try {
+                    FileWriter writer = new FileWriter(file.getPath());
+                    writer.write(getClientes().toString());
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -248,7 +270,7 @@ public class HelloController implements Initializable {
     }
 
     public ObservableList<Cliente> getClientes() { //00013423: Crea metodo que devolvera una lista de instancias de la clase Cliente
-        ObservableList<Cliente> clientes = FXCollections.observableArrayList(); //00013423: Crea una lista que se usara para los valores del TableViewA
+        ObservableList<Cliente> clientes = FXCollections.observableArrayList(); //00013423: Crea una lista que se usara para guardar los valores que iran en el TableViewA
         try {
             int id = Integer.parseInt(idClienteA.getText()); //00013423: Linea que convierte el valor del campo ID en un entero
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); //00013423: Cargando el controlador para la base de datos
