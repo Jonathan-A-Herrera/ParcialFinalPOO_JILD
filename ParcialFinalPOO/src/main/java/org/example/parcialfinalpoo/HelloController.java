@@ -359,7 +359,7 @@ private void onGenerarReporteCButtonClick(ActionEvent event) { //00379823: Boton
                 tarjeta.setFechaExpiracion(rs.getString("Fecha_Expiración")); //00379823: Define los valores de la variable FechaExpiracion, pasando como parametro el nombre de la columna de la BD
                 tarjetas.add(tarjeta); //00379823: Se añaden los resultados a la lista que se le pasara como parametro al metodo .setItems(tarjeta) en el boton onGenerarReporteCButtonClick
             }
-            conn.close(); 
+            conn.close(); //00379823: Aquí se cierra la conexión a la base de datos
         } catch (Exception e) { //00379823: Control para el manejo de excepciones
             e.printStackTrace(); //00379823: Imprime mensajes de errores estandar en caso de que haya habido algun error
         }
