@@ -238,7 +238,7 @@ public class HelloController implements Initializable {
             ObservableList<Cliente> datos = getClientes();
             reporteTableViewD.setItems(datos);
             File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteD.txt");
-            generarReporteD(facilitadorClienteD.getText());
+            generarReporteD(file, facilitadorClienteD.getText());
         }
     }
 
@@ -321,49 +321,54 @@ public class HelloController implements Initializable {
         }
     }
 
-    // 00085720 Genera reporte D
-    private void generarReporteD(String facilitador) {
-        // 00085720 Cargando el controlador para la base de datos
+    public ObservableList<Cliente> getClientesPorFacilitador(String facilitador) {
+        ObservableList<Cliente> clientes = FXCollections.observableArrayList();
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false";
+        String user = "poo";
+        String password = "ParcialFinal";
+
         try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // 00085720 Cargar el driver de la base de datos
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace(); // 00085720 Imprimir la pila de errores
-            showAlert(Alert.AlertType.ERROR, "Error", "Error al cargar el controlador de la base de datos."); // 00085720 Mostrar alerta de error
-            return; // 00085720 Salir del metodo si hay un error
-        }
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            Connection connection = DriverManager.getConnection(url, user, password);
+            String consulta = "SELECT c.ID, c.nombre, c.cantidadCompras FROM Cliente c WHERE c.facilitador = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(consulta);
+            preparedStatement.setString(1, facilitador);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-        String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; // 00085720 URL de la conexion a la base de datos
-        String user = "poo"; // 00085720 Usuario de la base de datos
-        String password = "ParcialFinal"; // 00085720 Contraseña de la base de datos
-
-        // 00085720 Try para asegurar que los recursos se cierran correctamente
-        try (Connection connection = DriverManager.getConnection(url, user, password); // 00085720 Conectar a la base de datos
-             PreparedStatement preparedStatement = connection.prepareStatement( // 00085720 Crear la consulta preparada
-                     "SELECT c.ID, c.nombre, c.cantidadCompras FROM Cliente c WHERE c.facilitador = ?"); // 00085720 Consulta SQL
-             FileWriter writer = new FileWriter( // 00085720 Crear un FileWriter
-                     new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteD.txt"))) { // 00085720 Archivo de salida
-
-            preparedStatement.setString(1, facilitador); // 00085720 Establecer el parámetro 'facilitador'
-            try (ResultSet resultSet = preparedStatement.executeQuery()) { // 00085720 Ejecutar la consulta
-                ObservableList<Cliente> data = FXCollections.observableArrayList(); // 00085720 Crear lista observable para la tabla
-
-                while (resultSet.next()) { // 00085720 Iterar sobre los resultados
-                    int id = resultSet.getInt("ID"); // 00085720 Obtener ID del resultado
-                    String nombre = resultSet.getString("nombre"); // 00085720 Obtener nombre del resultado
-                    int cantidadCompras = resultSet.getInt("cantidadCompras"); // 00085720 Obtener cantidad de compras del resultado
-
-                    writer.write("ID: " + id + ", Nombre: " + nombre + ", Cantidad de Compras: " + cantidadCompras + "\n"); // 00085720 Escribir los datos en el archivo
-
-                    data.add(new Cliente(id, nombre, cantidadCompras)); // 00085720 Añadir los datos a la lista observable
-                }
-                showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Reporte generado con éxito"); // 00085720 Mostrar alerta de éxito
+            while (resultSet.next()) {
+                int id = resultSet.getInt("ID");
+                String nombre = resultSet.getString("nombre");
+                int cantidadCompras = resultSet.getInt("cantidadCompras");
+                clientes.add(new Cliente(id, nombre, cantidadCompras));
             }
-        } catch (SQLException e) {
-            e.printStackTrace(); // 00085720 Imprimir la pila de errores SQL
-            showAlert(Alert.AlertType.ERROR, "Error", "Error en la conexión a la base de datos."); // 00085720 Mostrar alerta de error SQL
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Error en la conexión a la base de datos.");
+        }
+        return clientes;
+    }
+
+    public void generarReporteD(File file, String facilitador) {
+        ObservableList<Cliente> datos = getClientesPorFacilitador(facilitador);
+        try {
+            FileWriter writer;
+            if (file.exists()) {
+                writer = new FileWriter(file, true); // Append mode
+            } else {
+                writer = new FileWriter(file); // Overwrite mode
+            }
+
+            for (Cliente cliente : datos) {
+                String info = "ID: " + cliente.getID_Cliente() +
+                        ", Nombre: " + cliente.getNombre() +
+                        ", Cantidad de Compras: " + cliente.getCantidadCompras() + "\n";
+                writer.write(info);
+            }
+            writer.close();
+            showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Reporte generado con éxito");
         } catch (IOException e) {
-            e.printStackTrace(); // 00085720 Imprimir la pila de errores IO
-            showAlert(Alert.AlertType.ERROR, "Error", "Error al escribir en el archivo."); // 00085720 Mostrar alerta de error IO
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error", "Error al escribir en el archivo.");
         }
     }
 
