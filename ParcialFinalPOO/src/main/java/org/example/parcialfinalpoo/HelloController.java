@@ -209,20 +209,31 @@ public class HelloController implements Initializable {
         } else {
             ObservableList<Cliente> datos = getClientes(); //00013423: Se instancia un objeto datos que guardara la lista de clientes que retorna el netodo getClientes();
             reporteTableViewA.setItems(datos); //00013423: Mostrara los datos en el TableViewA del reporte A en sus casillas correspondientes.
-            File file = new File("ReporteA");
+            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/","ReporteA.txt");
             if (!file.exists()){
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text files (*.txt)", "*.txt"));
-                fileChooser.setInitialDirectory(new File(System.getProperty("user.dir") + "/src/main/java/Reportes/"));
-                File fileToSave = fileChooser.showSaveDialog(null);
-                if (fileToSave != null){
-                    file = fileToSave;
-                } else{
-                    return;
-                }
                 try {
-                    FileWriter writer = new FileWriter(file.getPath());
-                    writer.write(getClientes().toString());
+                    FileWriter writer = new FileWriter(file,true);
+                    for(Cliente cliente : datos){
+                        String info = "ID: " + cliente.getID_Cliente()
+                                      +"    Nombre: " + cliente.getNombre()
+                                      +"    Monto total: " + cliente.getMonto()
+                                      +"    Fecha de compra: " + cliente.getFechaCompra() + "\n";
+                        writer.write(info);
+                    }
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    FileWriter writer = new FileWriter(file,true);
+                    for(Cliente cliente : datos){
+                        String info = "ID: " + cliente.getID_Cliente()
+                                +"    Nombre: " + cliente.getNombre()
+                                +"    Monto total: " + cliente.getMonto()
+                                +"    Fecha de compra: " + cliente.getFechaCompra() + "\n";
+                        writer.write(info);
+                    }
                     writer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -230,6 +241,8 @@ public class HelloController implements Initializable {
             }
         }
     }
+
+    //public void writeReportA(File file){}
 
     @FXML
     private void onGenerarReporteBButtonClick(ActionEvent event) {
