@@ -35,13 +35,14 @@ javafx {
 }
 
 dependencies {
-
+  implementation 'com.microsoft.sqlserver:mssql-jdbc:10.2.1.jre11'
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 
 test {
-useJUnitPlatform()}
+  useJUnitPlatform()
+}
 
 jlink {
   imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")

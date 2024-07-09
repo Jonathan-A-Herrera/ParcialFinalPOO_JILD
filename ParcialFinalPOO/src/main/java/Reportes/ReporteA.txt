@@ -1,0 +1,1 @@
+ID: 1    Nombre: Isaac Cañas    Monto total: 600.0    Fecha de compra: 2024-07-01
