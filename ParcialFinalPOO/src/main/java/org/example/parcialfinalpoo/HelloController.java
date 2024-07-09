@@ -222,11 +222,17 @@ public class HelloController implements Initializable {
         showAlert(Alert.AlertType.INFORMATION, "Reporte B", "Generar Reporte B");
     }
 
-    @FXML
-    private void onGenerarReporteCButtonClick(ActionEvent event) {
-        // Codigo para generar reporte C
-        showAlert(Alert.AlertType.INFORMATION, "Reporte C", "Generar Reporte C");
+  @FXML
+private void onGenerarReporteCButtonClick(ActionEvent event) { //00379823: Boton que genera el reporte C
+    if (idClienteC.getText().isEmpty()) { //00379823: Mostrará error en caso que este campo no se haya llenado adecuadamente
+        showAlert(Alert.AlertType.WARNING, "Fallo", "El ID del cliente es inválido"); //00379823: Mostrara la alerta 
+    } else {
+        ObservableList<Tarjeta> datos = getTarjetasCliente(); //00379823: Se instancia un objeto de datos que guarda la lista de tarjetas por cliente que retorna el metodo getTarjetasCliente();  
+        reporteTableViewC.setItems(datos); //00379823: Mostrara los datos en el TableViewC del reporte C como corresponde
+        File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteC.txt"); //00379823: Se crea un archivo tipo file en la ruta acutal, con el nombre ReporteC.txt
+        generarReporteC(file); //00379823: Se llama al metodo que genera los reportes de la consulta C
     }
+}
 
     @FXML
     private void onGenerarReporteDButtonClick(ActionEvent event) {
@@ -318,6 +324,78 @@ public class HelloController implements Initializable {
             }
         }
     }
+    
+    public ObservableList<Tarjeta> getTarjetasCliente() { //00379823: Crea metodo que devolvera una lista de instancias de la clase Tarjetas
+       ObservableList<Tarjeta> tarjetas = FXCollections.observableArrayList();//00379823: Crea una lista que se usara para guardar los valores que iran en el TableViewC
+        try {
+        int id = Integer.parseInt(idClienteC.getText()); //00379823: Esta linea convierte el valor del campo ID en un entero
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); //00379823: Cargando el controlador para la base de datos
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; //00379823: Variable String la cual se inicializa con la URL de la conexion a la BD
+        String user = "poo"; //00379823: Usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
+        String password = "ParcialFinal"; //00379823: Contraseña del usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
+        Connection conn = DriverManager.getConnection(url, user, password); //00379823: Estableciendo conexion con la base de datos
+        
+        String sqlCredito = "SELECT Número_Tarjeta, 'Crédito' AS Tipo FROM Tarjeta WHERE ID_Cliente = " + id + " AND Tipo = 'Crédito'"; //00379823: Se hace uso de la variable id declarada arriba como parametro de busqueda
+        Statement stmtCredito = conn.createStatement(); //00379823: Se crea un objeto de tipo statement que ayudara a mandar consultas a la BD
+        ResultSet rsCredito = stmtCredito.executeQuery(sqlCredito); //00379823: Se crea un objeto rs que a su vez ejecuta la consulta a la BD, al metodo .executeQuery se le pasa como parametro la variable anterior de tipo string.
+        while (rsCredito.next()) { //00379823: Mientras rsCredito.next() sea verdadero, se ira iterando sobre los resultados de la consulta
+            String numeroTarjeta = rsCredito.getString("Número_Tarjeta"); // 00379823: Obtiene el número de tarjeta de la columna "Número_Tarjeta"
+            String tarjetaCensurada = censurarNumeroTarjeta(numeroTarjeta); // 00379823: Manda a llamar la función para censurar el número de tarjeta obtenida
+            tarjetas.add(new Tarjeta(tarjetaCensurada, "Crédito")); //00379823: Agrega una nueva instancia de Tarjeta (censurada) a la lista de tarjetas, marcada como "Crédito"
+        }
+        rsCredito.close();    //00379823: Se finaliza la ejecución de la consulta 
+        stmtCredito.close(); //00379823: Se finaliza el llamado del objeto de tipo statement para dar paso a la siguiente consulta 
+        
+        String sqlDebito = "SELECT Número_Tarjeta, 'Débito' AS Tipo FROM Tarjeta WHERE ID_Cliente = " + id + " AND Tipo = 'Débito'"; //00379823: Se hace uso de la variable id declarada arriba como parametro de busqueda
+        Statement stmtDebito = conn.createStatement();//00379823: Se crea un objeto de tipo statement que ayudara a mandar consultas a la BD
+        ResultSet rsDebito = stmtDebito.executeQuery(sqlDebito); //00379823: Se crea un objeto rs que a su vez ejecuta la consulta a la BD, al metodo .executeQuery se le pasa como parametro la variable anterior de tipo string.
+        while (rsDebito.next()) { //00379823: Mientras rsDebito.next() sea verdadero, se ira iterando sobre los resultados de la consulta
+            String numeroTarjeta = rsDebito.getString("Número_Tarjeta"); // 00379823: Obtiene el número de tarjeta de la columna "Número_Tarjeta"
+            String tarjetaCensurada = censurarNumeroTarjeta(numeroTarjeta); // 00379823: Manda a llamar la función para censurar el número de tarjeta obtenida
+            tarjetas.add(new Tarjeta(tarjetaCensurada, "Débito")); //00379823: Agrega una nueva instancia de Tarjeta (censurada) a la lista de tarjetas, marcada como "Débito"
+        }
+        rsDebito.close(); //00379823: Se finaliza la ejecución de la consulta 
+        stmtDebito.close();//00379823: Se finaliza el llamado del objeto de tipo statement para dar paso a la siguiente consulta 
+        
+        conn.close();
+    } catch (Exception e) { //00379823: Control para el manejo de excepciones
+        e.printStackTrace();//00379823: Imprime mensajes de errores estandar en caso de que haya habido algun error
+    }
+    return tarjetas;//00379823: Retorna los elementos en la lista
+}
 
+public void generarReporteC(File file) {
+    ObservableList<Tarjeta> datos = getTarjetasCliente(); //00379823: Carga los datos de la lista
+    if (!file.exists()) { //00379823: Verifica si existe este archivo
+        try {
+            FileWriter writer = new FileWriter(file); //00379823: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
+            for (Tarjeta tarjeta : datos) { //00379823: ciclo for que permitira recorrer los elementos de la lista
+                String info = "Número de Tarjeta: " + tarjeta.getNumero() + "    Tipo: " + tarjeta.getTipo() + "\n"; //00379823: variable que ira guardando los datos de la lista a medida que realiza iteraciones
+                writer.write(info); //00379823: metodo de la instancia tipo writer que escribira los datos correspondientes a cada iteracion
+            }
+            writer.close(); //00379823: Cierra el flujo de escritura en el archivo reporteC
+        } catch (Exception e) { //00379823: Control para el manejo de excepciones
+            e.printStackTrace(); //00379823: Imprime mensajes de errores estandar en caso de que haya habido algun error
+        }
+    } else {
+        try {
+            FileWriter writer = new FileWriter(file, true);
+            for (Tarjeta tarjeta : datos) { //00379823: ciclo for que permitira recorrer los elementos de la lista
+                String info = "Número de Tarjeta: " + tarjeta.getNumero() + "    Tipo: " + tarjeta.getTipo() + "\n"; //00379823: variable que ira guardando los datos de la lista a medida que realiza iteraciones
+                writer.write(info); //00379823: metodo de la instancia tipo writer que escribira los datos correspondientes a cada iteracion
+            }
+            writer.close(); //00379823: Cierra el flujo de escritura en el archivo reporteC
+        } catch (Exception e) {  //00379823: Control para el manejo de excepciones
+            e.printStackTrace(); //00379823: Imprime mensajes de errores estandar en caso de que haya habido algun error
+        }
+    }
+}
 
+    private String censurarNumeroTarjeta(String numeroTarjeta) { //00379823: metodo para censurar los dígitos de cada tarjeta encontrada
+    if (numeroTarjeta.length() == 16) { //00379823: Verifica si el número de tarjeta tiene exactamente 16 caracteres 
+        return "XXXX XXXX XXXX " + numeroTarjeta.substring(12); // 00379823: Censura los primeros 12 dígitos y muestra los últimos 4
+    } else { 
+        return numeroTarjeta; //00379823: Si por alguna razón no tiene 16 dígitos, simplemente devuelve el número original
+    }
+  }
 }
