@@ -81,13 +81,14 @@
         <TextField fx:id="fechaInicioA" />
         <Label text="Fecha Fin:" />
         <TextField fx:id="fechaFinA" />
-        <Button text="Generar Reporte A" />
+        <Button fx:id="onGenerarReporteAButtonClick" onAction="#onGenerarReporteAButtonClick" text="Generar Reporte A" />
       </HBox>
       <TableView fx:id="reporteTableViewA" prefHeight="200.0" prefWidth="450.0">
         <columns>
-          <TableColumn fx:id="fechaColumnA" prefWidth="91.19997787475586" text="Fecha" />
-          <TableColumn fx:id="descripcionColumnA" prefWidth="196.80006408691406" text="Descripción" />
-          <TableColumn fx:id="montoColumnA" prefWidth="97.5999755859375" text="Monto" />
+          <TableColumn fx:id="idColumnA" prefWidth="91.19997787475586" text="id" />
+          <TableColumn fx:id="idNameA" prefWidth="255.0" text="Nombre" />
+          <TableColumn fx:id="idMontoA" prefWidth="167.0" text="Monto" />
+          <TableColumn fx:id="idFechaCompraA" prefWidth="414.0" text="Fecha" />
         </columns>
       </TableView>
     </VBox>
