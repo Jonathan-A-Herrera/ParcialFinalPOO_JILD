@@ -340,30 +340,30 @@ private void onGenerarReporteCButtonClick(ActionEvent event) { //00379823: Boton
         }
     }
 
-    public ObservableList<Tarjeta> getTarjetasCliente() {
-        ObservableList<Tarjeta> tarjetas = FXCollections.observableArrayList();
+    public ObservableList<Tarjeta> getTarjetasCliente() { //00379823: Crea metodo que devolvera una lista de instancias de la clase Tarjeta
+        ObservableList<Tarjeta> tarjetas = FXCollections.observableArrayList(); //00379823: Crea una lista que se usara para guardar los valores que iran en el TableViewC
         try {
-            int id = Integer.parseInt(idClienteC.getText());
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false";
-            String user = "poo";
-            String password = "ParcialFinal";
-            Connection conn = DriverManager.getConnection(url, user, password);
-            String query = "SELECT Número_Tarjeta, Tipo, Fecha_Expiración FROM Tarjeta WHERE ID_Cliente = " + id;
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()) {
-                Tarjeta tarjeta = new Tarjeta();
-                tarjeta.setNumeroTarjeta(rs.getString("Número_Tarjeta"));
-                tarjeta.setTipo(rs.getString("Tipo"));
-                tarjeta.setFechaExpiracion(rs.getString("Fecha_Expiración"));
-                tarjetas.add(tarjeta);
+            int id = Integer.parseInt(idClienteC.getText()); //00379823: Esta línea convierte el valor del campo ID en un entero
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); //00379823: Cargando el controlador para la base de datos
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; //00379823: Variable String la cual se inicializa con la URL de la conexion a la BD
+            String user = "poo"; //00379823: Usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
+            String password = "ParcialFinal"; //00379823: Contraseña del usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
+            Connection conn = DriverManager.getConnection(url, user, password); //00379823: Estableciendo conexion con la base de datos
+            String query = "SELECT Número_Tarjeta, Tipo, Fecha_Expiración FROM Tarjeta WHERE ID_Cliente = " + id; //00379823: Se hace uso de la variable id declarada arriba como parametro de busqueda
+            Statement stmt = conn.createStatement(); //00379823: Se crea un objeto de tipo statement que ayudara a mandar consultas a la BD
+            ResultSet rs = stmt.executeQuery(query); //00379823: Crea un objeto de tipo rs que a su vez ejecuta la consulta a la BD, al metodo .executeQuery se le pasa como parametro la variable string de antes
+            while (rs.next()) { //00379823: Mientras rs.next() sea verdadero, se ira iterando sobre los resultados de la consulta
+                Tarjeta tarjeta = new Tarjeta(); //00379823: Crea una instancia de tarjeta
+                tarjeta.setNumeroTarjeta(rs.getString("Número_Tarjeta")); //00379823: Define los valores de la variable Numero_Tarjeta, pasando como parametro el nombre de la columna de la BD
+                tarjeta.setTipo(rs.getString("Tipo")); //00379823: Define los valores de la variable tipo, pasando como parametro el nombre de la columna de la BD
+                tarjeta.setFechaExpiracion(rs.getString("Fecha_Expiración")); //00379823: Define los valores de la variable FechaExpiracion, pasando como parametro el nombre de la columna de la BD
+                tarjetas.add(tarjeta); //00379823: Se añaden los resultados a la lista que se le pasara como parametro al metodo .setItems(tarjeta) en el boton onGenerarReporteCButtonClick
             }
-            conn.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            conn.close(); 
+        } catch (Exception e) { //00379823: Control para el manejo de excepciones
+            e.printStackTrace(); //00379823: Imprime mensajes de errores estandar en caso de que haya habido algun error
         }
-        return tarjetas;
+        return tarjetas; //00379823: Retorna los elementos en la lista
     }
 
 public void generarReporteC(File file) {
@@ -382,7 +382,7 @@ public void generarReporteC(File file) {
         }
     } else {
         try {
-            FileWriter writer = new FileWriter(file, true);
+            FileWriter writer = new FileWriter(file, true); //00379823: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
             for (Tarjeta tarjeta : datos) { //00379823: ciclo for que permitira recorrer los elementos de la lista
                 String info = "Número de Tarjeta: " + tarjeta.getNumeroTarjeta() + "    Tipo: " + tarjeta.getTipo() + "\n"; //00379823: variable que ira guardando los datos de la lista a medida que realiza iteraciones
                 writer.write(info); //00379823: metodo de la instancia tipo writer que escribira los datos correspondientes a cada iteracion
