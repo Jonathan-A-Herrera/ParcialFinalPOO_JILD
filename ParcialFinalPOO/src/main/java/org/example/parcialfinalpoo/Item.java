@@ -1,63 +1,46 @@
+
 package org.example.parcialfinalpoo;
 
+// Clase que representa un elemento con ID, nombre y descripcion
 public class Item {
+    private String id; // ID del elemento
+    private String name; // Nombre del elemento
+    private String description; // Descripcion del elemento
 
-    private final String id;
-    private String name;
-    private String description;
-    private String facilitador;
-
-    // 00085720 Constructor con parametros para inicializar las variables del item
-    public Item(String id, String name, String description, String facilitador) {
-        this.id = id; // 00085720: Asignar el ID del ítem
-        this.name = name; // 00085720: Asignar el nombre del ítem
-        this.description = description; // 00085720: Asignar la descripción del ítem
-        this.facilitador = facilitador; // 00085720: Asignar el facilitador del ítem
+    // Constructor que inicializa los atributos del elemento
+    public Item(String id, String name, String description) {
+        this.id = id; // Asigna el ID
+        this.name = name; // Asigna el nombre
+        this.description = description; // Asigna la descripcion
     }
 
-    // 00085720 Obtener el ID del item
+    // Metodo para obtener el ID del elemento
     public String getId() {
         return id;
     }
 
-    // 00085720 Obtener el nombre del item
+    // Metodo para establecer el ID del elemento
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    // Metodo para obtener el nombre del elemento
     public String getName() {
         return name;
     }
 
-    // 00085720 Asignar el nombre del item
+    // Metodo para establecer el nombre del elemento
     public void setName(String name) {
         this.name = name;
     }
 
-    // 00085720 Obtener la descripción del item
+    // Metodo para obtener la descripción del elemento
     public String getDescription() {
         return description;
     }
 
-    // 00085720 Asignar la descripción del item
+    // Metodo para establecer la descripción del elemento
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    // 00085720 Obtener el facilitador del item
-    public String getFacilitador() {
-        return facilitador;
-    }
-
-    // 00085720 Asignar el facilitador del item
-    public void setFacilitador(String facilitador) {
-        this.facilitador = facilitador;
-    }
-
-    // 00085720: Representacion en forma de cadena del ítem
-    @Override
-    public String toString() {
-        return "Item{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", facilitador='" + facilitador + '\'' +
-                '}';
     }
 }

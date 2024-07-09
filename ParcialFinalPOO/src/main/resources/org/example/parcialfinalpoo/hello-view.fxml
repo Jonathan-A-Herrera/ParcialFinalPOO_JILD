@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -178,7 +177,7 @@
       </HBox>
       <HBox spacing="10.0">
         <Label text="Facilitador de Tarjeta:" />
-        <ComboBox fx:id="cbFacilitador" promptText="Facilitadores" />
+            <TextField fx:id="facilitadorClienteD" />
         <Button onAction="#onGenerarReporteDButtonClick" text="Generar Reporte D" />
       </HBox>
       <TableView fx:id="reporteTableViewD" prefHeight="200.0" prefWidth="450.0">
