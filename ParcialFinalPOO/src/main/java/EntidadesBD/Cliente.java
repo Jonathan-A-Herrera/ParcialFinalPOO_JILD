@@ -7,7 +7,8 @@ public class Cliente {
     private String telefono; //00013423: Variable telefono que se relaciona al campo Telefono de la BD
     private double monto; //00013423: variables que ayudaran a hacer los joins entre consultas para darle valores a la columna monto
     private String fechaCompra; //00013423: variable que ayudara a hacer los join entre consulta para darle valores a la columna fecha
-
+    private String facilitador; //00085720 variable facilitador
+    private int cantidadCompras; //00085720 variable que ayudara a hacer los joins entre consultas para darle valores a la columna cantidad
     public Cliente() {} //00013423: Constructor vacio para la instanciacion de objetos sin inicializar sus variables
 
     public Cliente(int ID_Cliente, String nombre, String direccion, String telefono,double monto, String fechaCompra) { ///00013423: Constructor para crear una instancia con sus variables inicializadas
@@ -70,5 +71,19 @@ public class Cliente {
 
     public void setFechaCompra(String fechaCompra) {
         this.fechaCompra = fechaCompra;
+    }
+
+    public void setCantidadCompras(int cantidadCompras) {
+    }
+
+    public void setFacilitador(String facilitador) {
+    }
+
+    public int getCantidadCompras() {
+        return this.cantidadCompras;
+    }
+
+    public String getFacilitador() {
+        return this.facilitador;
     }
 }
