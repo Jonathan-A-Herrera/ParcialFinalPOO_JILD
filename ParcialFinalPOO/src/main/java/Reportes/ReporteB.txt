@@ -1,0 +1,2 @@
+ID: 5    Nombre: Diana Santamaria    Gasto total en el mes: 50.0
+ID: 1    Nombre: Isaac Cañas    Gasto total en el mes: 600.0

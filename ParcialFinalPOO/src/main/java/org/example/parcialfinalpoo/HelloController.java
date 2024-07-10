@@ -54,7 +54,20 @@ public class HelloController implements Initializable {
     private TableColumn<Cliente, Double> idMontoA; //00013423: Columna de la TVA que contiene el monto de la compra del cliente
     @FXML
     private TableColumn<Cliente, String> idFechaCompraA; //00013423: Columna de la TVA que contiene la fecha en la que se realizo la compra
-
+    @FXML
+    private TableView<Cliente> reporteTableViewB;//00095123 table view usada para el reporte B
+    @FXML
+    private TableColumn<Cliente, Integer> idClientesB;//00095123 columna de la tvb que contiene el id del cliente
+    @FXML
+    private TableColumn<Cliente, String> idNombreB;//00095123 columna de la tvb que contiene el nombre del cliente
+    @FXML
+    private TableColumn<Cliente, Double> idCompraB;//00095123 columna de la tvb que contiene el total gastado en un mes
+    @FXML
+    private TextField idClienteB;//00095123 campo de texto que guarda el id del cliente
+    @FXML
+    private TextField fechaInicioB;//00095123 campo de texto que guarda el mes a evaluar
+    @FXML
+    private TextField fechaFinB;//00095123 campo de texto que guarda el año a evaluar
     @FXML 
     private TextField idClienteC; //00379823: Campo de texto que va a almacenar el id del cliente a buscar
     @FXML
@@ -95,6 +108,10 @@ public class HelloController implements Initializable {
         idMontoA.setCellValueFactory(new PropertyValueFactory<>("monto")); //00013423: Configura la columna del monto total de la compra
         idFechaCompraA.setCellValueFactory(new PropertyValueFactory<>("fechaCompra")); //00013423: //00013423: Configura la columna con la fecha de la compra
 
+        idClientesB.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente")); //00095123 Configura la columna ID
+        idNombreB.setCellValueFactory(new PropertyValueFactory<>("nombre")); //00095123 Configura la columna Nombre
+        idCompraB.setCellValueFactory(new PropertyValueFactory<>("monto")); //00095123 Configura la columna Total Gastado
+      
         numTarjetaC.setCellValueFactory(new PropertyValueFactory<>("numeroTarjetaCensurado"));
         tipoTarjetaC.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         fechaExpTarjetaC.setCellValueFactory(new PropertyValueFactory<>("fechaExpiracion"));
@@ -228,12 +245,29 @@ public class HelloController implements Initializable {
             generarReporteA(file); //00013423: Se llama al metodo que genera los reportes de la consulta A
         }
     }
-
-
     @FXML
     private void onGenerarReporteBButtonClick(ActionEvent event) {
-        // Codigo para generar reporte B
-        showAlert(Alert.AlertType.INFORMATION, "Reporte B", "Generar Reporte B");
+        String idClienteStr = idClienteB.getText(); //00095123 Obtener el ID de cliente desde el TextField
+        String mesStr = fechaInicioB.getText(); //00095123 Obtener el mes desde el TextField
+        String anioStr = fechaFinB.getText(); //00095123 Obtener el año desde el TextField
+        if (idClienteStr.isEmpty() || mesStr.isEmpty() || anioStr.isEmpty()) { //00095123 Validar que todos los campos estén llenos
+            showAlert(Alert.AlertType.WARNING, "Fallo", "Llene todos los campos");//00095123 Mostrala una alerta para que esten llenos los campos
+            return;
+        }
+
+        try {
+            int idCliente = Integer.parseInt(idClienteStr); //00095123 convierte el ID de cliente a entero
+            int mes = Integer.parseInt(mesStr); //00095123 convierte el mes a entero
+            int anio = Integer.parseInt(anioStr); //00095123 convierte el año a entero
+            ReporteB reporteB = new ReporteB();//00095123 Llamar al método getClientes de ReporteB para obtener los datos del reporte B
+            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteB.txt");//00095123 se crea un archivo file en la ruta actual, con el nombre ReporteB.txt
+            reporteB.generarReporteB(file, idCliente, mes, anio);//00095123 llamar al metodo para generar el reporte B
+            ObservableList<Cliente> datos = reporteB.getClientes(idCliente, mes, anio);//00095123 se instancia un objeto datos que guardara la lista de clientes que retorna el netodo getClientes();
+            reporteTableViewB.setItems(datos);//00095123 mostrar los datos en el TableView
+            showAlert(Alert.AlertType.INFORMATION, "Éxito", "Reporte B generado y mostrado correctamente");//00095123 Mostrar mensaje de éxito (opcional)
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "ID de cliente, mes y año deben ser números válidos");//00095123 muestra una alerta donde los valores ingresados tienen que ser correctos
+        }
     }
 
   @FXML

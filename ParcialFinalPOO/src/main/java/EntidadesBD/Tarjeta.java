@@ -60,6 +60,7 @@ public class Tarjeta {
         this.FK_idCliente = FK_idCliente; //00013423: Metodo setter para darle un valor al campo FK_idCliente
     }
 
+
     public String getNumeroTarjetaCensurado() {
         if (numeroTarjeta.length() > 4) { //00379823: Condicion para poder ocultar los digitos de la tarjeta tomando en cuenta la longuitud de digitos
             return "**** **** **** " + numeroTarjeta.substring(numeroTarjeta.length() - 4); //00379823: Devuelve los primeros 12 dígitos y los oculta con * y solo muestra los ultimos 4
@@ -68,3 +69,4 @@ public class Tarjeta {
         }
     }
 }
+
