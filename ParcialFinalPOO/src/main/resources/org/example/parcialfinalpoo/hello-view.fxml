@@ -25,7 +25,7 @@
           <Insets bottom="10" left="10" right="10" top="10" />
         </padding>
         <VBox spacing="10">
-          <Label text="Clientes" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+          <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Clientes" />
           <HBox spacing="10">
             <Label text="ID:" />
             <TextField fx:id="idClienteField" />
@@ -43,10 +43,10 @@
             <TextField fx:id="telefonoClienteField" />
           </HBox>
           <HBox spacing="10">
-            <Button onAction="#createCliente" text="Crear" />
-            <Button onAction="#readCliente" text="Consultar" />
-            <Button onAction="#updateCliente" text="Actualizar" />
-            <Button onAction="#deleteCliente" text="Eliminar" />
+            <Button text="Crear" />
+            <Button text="Consultar" />
+            <Button text="Actualizar" />
+            <Button text="Eliminar" />
           </HBox>
           <TableView fx:id="clientesTableView" prefHeight="200.0" prefWidth="800.0">
             <columns>
@@ -69,7 +69,7 @@
           <Insets bottom="10" left="10" right="10" top="10" />
         </padding>
         <VBox spacing="10">
-          <Label text="Tarjetas" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+          <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Tarjetas" />
           <HBox spacing="10">
             <Label text="ID Tarjeta:" />
             <TextField fx:id="idTarjetaField" />
@@ -95,10 +95,10 @@
             <TextField fx:id="facilitadorTarjetaField" />
           </HBox>
           <HBox spacing="10">
-            <Button onAction="#createTarjeta" text="Crear" />
-            <Button onAction="#readTarjeta" text="Consultar" />
-            <Button onAction="#updateTarjeta" text="Actualizar" />
-            <Button onAction="#deleteTarjeta" text="Eliminar" />
+            <Button text="Crear" />
+            <Button text="Consultar" />
+            <Button text="Actualizar" />
+            <Button text="Eliminar" />
           </HBox>
           <TableView fx:id="tarjetasTableView" prefHeight="200.0" prefWidth="800.0">
             <columns>
@@ -123,7 +123,7 @@
           <Insets bottom="10" left="10" right="10" top="10" />
         </padding>
         <VBox spacing="10">
-          <Label text="Compras" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+          <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Compras" />
           <HBox spacing="10">
             <Label text="ID Compra:" />
             <TextField fx:id="idCompraField" />
@@ -149,10 +149,10 @@
             <TextField fx:id="descripcionCompraField" />
           </HBox>
           <HBox spacing="10">
-            <Button onAction="#createCompra" text="Crear" />
-            <Button onAction="#readCompra" text="Consultar" />
-            <Button onAction="#updateCompra" text="Actualizar" />
-            <Button onAction="#deleteCompra" text="Eliminar" />
+            <Button text="Crear" />
+            <Button text="Consultar" />
+            <Button text="Actualizar" />
+            <Button text="Eliminar" />
           </HBox>
           <TableView fx:id="comprasTableView" prefHeight="200.0" prefWidth="800.0">
             <columns>
@@ -173,11 +173,6 @@
   <Tab text="Reporte A">
     <VBox alignment="CENTER" spacing="20.0">
       <HBox spacing="10.0">
-        <ImageView fitHeight="125.0" fitWidth="165.0">
-          <image>
-            <Image url="@assets/logo-uca2.png" />
-          </image>
-        </ImageView>
         <Label text="Reporte A: Listar compras por cliente en un periodo">
           <HBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="45.0" />
@@ -211,11 +206,6 @@
   <Tab text="Reporte B">
     <VBox alignment="CENTER" spacing="20.0">
       <HBox spacing="10.0">
-        <ImageView fitHeight="125.0" fitWidth="165.0">
-          <image>
-            <Image url="@assets/logo-uca2.png" />
-          </image>
-        </ImageView>
         <Label text="Reporte B: Total de compras por cliente en un periodo">
           <HBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="45.0" />
@@ -248,11 +238,6 @@
   <Tab text="Reporte C">
     <VBox alignment="CENTER" spacing="20.0">
       <HBox spacing="10.0">
-        <ImageView fitHeight="125.0" fitWidth="165.0">
-          <image>
-            <Image url="@assets/logo-uca2.png" />
-          </image>
-        </ImageView>
         <Label text="Reporte C: Listar tarjetas por cliente">
           <HBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="45.0" />
@@ -281,11 +266,6 @@
   <Tab text="Reporte D">
     <VBox alignment="CENTER" spacing="20.0">
       <HBox spacing="10.0">
-        <ImageView fitHeight="125.0" fitWidth="165.0">
-          <image>
-            <Image url="@assets/logo-uca2.png" />
-          </image>
-        </ImageView>
         <Label text="Reporte D: Clientes que han realizado compras con un facilitador específico">
           <HBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="45.0" />

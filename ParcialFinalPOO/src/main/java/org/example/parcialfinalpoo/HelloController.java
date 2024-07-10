@@ -83,11 +83,6 @@ public class HelloController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         connectToDatabase();
-        // Configurar las columnas de la tabla
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id")); // 00085720 Configura la columna 'idColumn'
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name")); // 00085720 Configura la columna 'nameColumn'
-        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description")); // 00085720 Configura la columna 'descriptionColumn'
-        dataTableView.setItems(itemList); // 00085720 Vincular la lista a la tabla
 
         //00013423: Configurar las columnas de la tabla de reporte
         idColumnA.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente")); //00013423: Configura la columna id
