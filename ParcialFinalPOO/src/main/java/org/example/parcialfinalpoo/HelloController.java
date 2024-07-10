@@ -322,7 +322,7 @@ public class HelloController implements Initializable {
         }
     }
 
-    public ObservableList<Cliente> getClientesPorFacilitador(String facilitador) {
+  public ObservableList<Cliente> getClientesPorFacilitador(String facilitador) {
         ObservableList<Cliente> clientes = FXCollections.observableArrayList();
         String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false";
         String user = "poo";
@@ -335,10 +335,11 @@ public class HelloController implements Initializable {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(queryD);
             while (rs.next()) {
-                int id = resultSet.getInt("ID");
-                String nombre = resultSet.getString("nombre");
-                int cantidadCompras = resultSet.getInt("cantidadCompras");
-                clientes.add(new Cliente(id, nombre, cantidadCompras,facilitador));
+                Cliente cliente = new cliente ();
+                cliente.setID_Cliente(rs.getInt("ID_Cliente"));
+                cliente.setNombre(rs.getString("Nombre"));
+                cliente.setcantidadCompras(rs.getInt("cantidadCompras");
+                clientes.add(new Cliente(id, nombre, cantidadCompras));
             }
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
