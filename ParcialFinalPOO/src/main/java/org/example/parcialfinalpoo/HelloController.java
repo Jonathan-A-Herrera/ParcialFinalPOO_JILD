@@ -46,17 +46,17 @@ public class HelloController implements Initializable {
     @FXML
     private TableView<Cliente> reporteTableViewA; //00013423: Table view usada para el reporte A
     @FXML
-    private TableView<Cliente> reporteTableViewD; //00085720 Table view usada para el reporte D
-    @FXML
     private TextField facilitadorClienteD; //00085720 Guarda el facilitador del cliente
     @FXML
-    private TableView<Tarjeta> reporteTableViewD; 
+    private TableView<Cliente> reporteTableViewD; //00085720 Table view usada para el reporte D
     @FXML
-    private TableColumn<Tarjeta, Integer> idClienteD;
+    private TableColumn<Tarjeta, Integer> idColumnD;
     @FXML
-    private TableColumn<Tarjeta,String> idNameD; 
+    private TableColumn<Tarjeta,String> nombreColumnD;
     @FXML
-    private TableColumn<Tarjeta, Int> cantidadCompras; 
+    private TableColumn<Tarjeta, Integer> cantidadComprasColumn;
+    @FXML
+    private TableColumn<Tarjeta,String> columnFacilitador;
     @FXML
     private TableColumn<Cliente, Integer> idColumnA; //00013423: Columna de la TVA que contiene el id del cliente
     @FXML
@@ -94,6 +94,11 @@ public class HelloController implements Initializable {
         idNameA.setCellValueFactory(new PropertyValueFactory<>("nombre")); //00013423: Configura la columna de nombre
         idMontoA.setCellValueFactory(new PropertyValueFactory<>("monto")); //00013423: Configura la columna del monto total de la compra
         idFechaCompraA.setCellValueFactory(new PropertyValueFactory<>("fechaCompra")); //00013423: //00013423: Configura la columna con la fecha de la compra
+
+        idColumnD.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente"));
+        nombreColumnD.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        cantidadComprasColumn.setCellValueFactory(new PropertyValueFactory<>("cantidadCompras"));
+        columnFacilitador.setCellValueFactory(new PropertyValueFactory<>("Facilitador"));
     }
 
     //00085720 Metodo para crear un nuevo elemento
@@ -243,7 +248,7 @@ public class HelloController implements Initializable {
         if (facilitadorClienteD.getText().isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Fallo", "Llene el campo necesario");
         } else {
-            ObservableList<Cliente> datos = getClientes();
+            ObservableList<Cliente> datos = getClientesPorFacilitador();
             reporteTableViewD.setItems(datos);
             File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteD.txt");
             generarReporteD(file, facilitadorClienteD.getText());
@@ -330,24 +335,40 @@ public class HelloController implements Initializable {
         }
     }
 
-  public ObservableList<Cliente> getClientesPorFacilitador(String facilitador) {
+    public ObservableList<Cliente> getClientesPorFacilitador() {
         ObservableList<Cliente> clientes = FXCollections.observableArrayList();
         String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false";
         String user = "poo";
         String password = "ParcialFinal";
-
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            Connection connection = DriverManager.getConnection(url, user, password);
-            String queryD = "SELECT c.ID, c.nombre, c.cantidadCompras FROM Cliente c WHERE c.facilitador = ?";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(queryD);
+            Connection conn = DriverManager.getConnection(url, user, password);
+
+            String queryD = "SELECT " +
+                    "    cl.ID_Cliente, " +
+                    "    cl.Nombre, " +
+                    "    COUNT(trns.ID_Transacción) AS 'CantidadCompras', " +
+                    "    trj.Facilitador " +
+                    "FROM " +
+                    "    Cliente cl " +
+                    "    INNER JOIN Tarjeta trj ON cl.ID_Cliente = trj.ID_Cliente " +
+                    "    INNER JOIN Transacción trns ON trj.Número_Tarjeta = trns.Número_Tarjeta " +
+                    "WHERE " +
+                    "    trj.Facilitador = ? " +
+                    "GROUP BY " +
+                    "    cl.ID_Cliente, cl.Nombre, trj.Facilitador;";
+
+            PreparedStatement pstmt = conn.prepareStatement(queryD);
+            pstmt.setString(1, facilitadorClienteD.getText());
+            ResultSet rs = pstmt.executeQuery();
+
             while (rs.next()) {
-                Cliente cliente = new cliente ();
+                Cliente cliente = new Cliente();
                 cliente.setID_Cliente(rs.getInt("ID_Cliente"));
                 cliente.setNombre(rs.getString("Nombre"));
-                cliente.setcantidadCompras(rs.getInt("cantidadCompras");
-                clientes.add(new Cliente(id, nombre, cantidadCompras));
+                cliente.setCantidadCompras(rs.getInt("CantidadCompras"));
+                cliente.setFacilitador(rs.getString("Facilitador"));
+                clientes.add(new Cliente(cliente.getID_Cliente(), cliente.getNombre(), cliente.getCantidadCompras(), cliente.getFacilitador()));
             }
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -356,8 +377,9 @@ public class HelloController implements Initializable {
         return clientes;
     }
 
+
     public void generarReporteD(File file, String facilitador) {
-        ObservableList<Cliente> datos = getClientesPorFacilitador(facilitador);
+        ObservableList<Cliente> datos = getClientesPorFacilitador();
         try {
             FileWriter writer;
             if (file.exists()) {
