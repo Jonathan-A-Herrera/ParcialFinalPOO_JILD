@@ -1,4 +1,3 @@
-
 package EntidadesBD;
 
 public class Cliente {
@@ -9,16 +8,14 @@ public class Cliente {
     private double monto; //00013423: variables que ayudaran a hacer los joins entre consultas para darle valores a la columna monto
     private String fechaCompra; //00013423: variable que ayudara a hacer los join entre consulta para darle valores a la columna fecha
     private int cantidadCompras; //00085720 : variable que ayudara a hacer los join entre consulta para darle valores a la columna cantidad
-    private String facilitador;
 
     public Cliente() {} //00013423: Constructor vacio para la instanciacion de objetos sin inicializar sus variables
 
     // 00085720 Constructor de la clase Cliente
-    public Cliente(int id, String nombre, int cantidadCompras,String facilitador) {
+    public Cliente(int id, String nombre, int cantidadCompras) {
         this.ID_Cliente = id;
         this.nombre = nombre;
         this.cantidadCompras = cantidadCompras;
-        this.facilitador = facilitador;
     }
     public Cliente(int ID_Cliente, String nombre, String direccion, String telefono,double monto, String fechaCompra) { ///00013423: Constructor para crear una instancia con sus variables inicializadas
         this.ID_Cliente = ID_Cliente;
@@ -87,13 +84,5 @@ public class Cliente {
 
     public void setCantidadCompras(int cantidadCompras) {
         this.cantidadCompras = cantidadCompras;
-    }
-
-    public String getFacilitador() {
-        return facilitador;
-    }
-
-    public void setFacilitador(String facilitador) {
-        this.facilitador = facilitador;
     }
 }
