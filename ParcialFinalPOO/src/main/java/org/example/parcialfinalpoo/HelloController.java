@@ -112,9 +112,9 @@ public class HelloController implements Initializable {
         idNombreB.setCellValueFactory(new PropertyValueFactory<>("nombre")); //00095123 Configura la columna Nombre
         idCompraB.setCellValueFactory(new PropertyValueFactory<>("monto")); //00095123 Configura la columna Total Gastado
       
-        numTarjetaC.setCellValueFactory(new PropertyValueFactory<>("numeroTarjetaCensurado"));
-        tipoTarjetaC.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-        fechaExpTarjetaC.setCellValueFactory(new PropertyValueFactory<>("fechaExpiracion"));
+        numTarjetaC.setCellValueFactory(new PropertyValueFactory<>("numeroTarjetaCensurado")); //00379823: Configura la columna Num Tarjeta
+        tipoTarjetaC.setCellValueFactory(new PropertyValueFactory<>("tipo"));    //00379823: Configura la columna Tipo Tarjeta
+        fechaExpTarjetaC.setCellValueFactory(new PropertyValueFactory<>("fechaExpiracion"));//00379823: Configura la columna Fecha Expiracion
     }
 
     //00085720 Metodo para crear un nuevo elemento
