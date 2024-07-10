@@ -97,15 +97,15 @@ public class HelloController implements Initializable {
         idMontoA.setCellValueFactory(new PropertyValueFactory<>("monto")); //00013423: Configura la columna del monto total de la compra
         idFechaCompraA.setCellValueFactory(new PropertyValueFactory<>("fechaCompra")); //00013423: //00013423: Configura la columna con la fecha de la compra
 
-        idColumnD.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente"));
-        nombreColumnD.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        cantidadComprasColumn.setCellValueFactory(new PropertyValueFactory<>("cantidadCompras"));
-        columnFacilitador.setCellValueFactory(new PropertyValueFactory<>("Facilitador"));
+        idColumnD.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente")); // 00085720 Configura la columna ID_Cliente
+        nombreColumnD.setCellValueFactory(new PropertyValueFactory<>("nombre")); // 00085720 Configura la columna nombre
+        cantidadComprasColumn.setCellValueFactory(new PropertyValueFactory<>("cantidadCompras")); // 00085720 Configura la columna cantidadCompras
+        columnFacilitador.setCellValueFactory(new PropertyValueFactory<>("Facilitador")); // 00085720 Configura la columna Facilitador
 
-        compraDAO = new CompraDAO();
-        comprasList1 = FXCollections.observableArrayList();
-        comprasTableView.setItems(comprasList1);
-        cargarCompras();
+        compraDAO = new CompraDAO(); // 00085720 Inicializa el objeto compraDAO
+        comprasList1 = FXCollections.observableArrayList(); // 00085720 Inicializa la lista observable de compras
+        comprasTableView.setItems(comprasList1); // 00085720 Establece los items de la tabla de compras
+        cargarCompras(); // 00085720 Carga las compras
     }
 
     //00085720 Metodo para crear un nuevo elemento
@@ -411,46 +411,58 @@ public class HelloController implements Initializable {
 
     @FXML
     public void crearCompra() {
+        //00085720 Crear un nuevo objeto Compra con los datos del formulario
         Compra compra = new Compra(
-                0, // El idCompra será autoincrementa
-                Integer.parseInt(idField.getText()),
-                Integer.parseInt(idTarjetaField.getText()),
-                fechaCompraField.getText(),
-                Double.parseDouble(montoField.getText()),
-                descriptionField.getText()
+                0, //00085720 El idCompra sera autoincrementado
+                Integer.parseInt(idField.getText()), //00085720 Obtener y convertir el ID del cliente
+                Integer.parseInt(idTarjetaField.getText()), //00085720 Obtener y convertir el ID de la tarjeta
+                fechaCompraField.getText(), //00085720 Obtener la fecha de compra
+                Double.parseDouble(montoField.getText()), //00085720 Obtener y convertir el monto de la compra
+                descriptionField.getText() //00085720 Obtener la descripcion de la compra
         );
+        //00085720 Llamar al método para crear la compra en la base de datos
         compraDAO.crearCompra(compra);
+        //00085720 Cargar las compras actualizadas en la tabla
         cargarCompras();
     }
 
     @FXML
     public void consultarCompras() {
+        //00085720 Llamar al metodo para cargar las compras desde la base de datos
         cargarCompras();
     }
 
     @FXML
     public void actualizarCompra() {
+        //00085720 Crear un objeto Compra con los datos del formulario incluyendo el ID de la compra
         Compra compra = new Compra(
-                Integer.parseInt(idCompraField.getText()),
-                Integer.parseInt(idField.getText()),
-                Integer.parseInt(idTarjetaField.getText()),
-                fechaCompraField.getText(),
-                Double.parseDouble(montoField.getText()),
-                descriptionField.getText()
+                Integer.parseInt(idCompraField.getText()), //00085720 Obtener y convertir el ID de la compra
+                Integer.parseInt(idField.getText()), //00085720 Obtener y convertir el ID del cliente
+                Integer.parseInt(idTarjetaField.getText()), //00085720 Obtener y convertir el ID de la tarjeta
+                fechaCompraField.getText(), //00085720 Obtener la fecha de compra
+                Double.parseDouble(montoField.getText()), //00085720 Obtener y convertir el monto de la compra
+                descriptionField.getText() //00085720 Obtener la descripcion de la compra
         );
+        //00085720 Llamar al metodo para actualizar la compra en la base de datos
         compraDAO.actualizarCompra(compra);
+        //00085720 Cargar las compras actualizadas en la tabla
         cargarCompras();
     }
 
     @FXML
     public void eliminarCompra() {
+        //00085720 Obtener y convertir el ID de la compra a eliminar
         int idCompra = Integer.parseInt(idCompraField.getText());
+        //00085720 Llamar al metodo para eliminar la compra en la base de datos
         compraDAO.eliminarCompra(idCompra);
+        //00085720 Cargar las compras actualizadas en la tabla
         cargarCompras();
     }
 
     private void cargarCompras() {
+        //00085720 Obtener la lista de compras desde la base de datos
         List<Compra> compras = compraDAO.obtenerCompras();
-            comprasList1.setAll(compras);
+        //00085720 Actualizar la lista observable con las compras obtenidas
+        comprasList1.setAll(compras);
     }
 }
