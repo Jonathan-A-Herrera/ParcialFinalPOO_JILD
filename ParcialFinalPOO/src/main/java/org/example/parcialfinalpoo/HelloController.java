@@ -48,19 +48,19 @@ public class HelloController implements Initializable {
     @FXML
     private TableColumn<Cliente, String> idFechaCompraA; //00013423: Columna de la TVA que contiene la fecha en la que se realizo la compra
     @FXML
-    private TableView<Cliente> reporteTableViewB;
+    private TableView<Cliente> reporteTableViewB;//00095123 table view usada para el reporte B
     @FXML
-    private TableColumn<Cliente, Integer> idClientesB;
+    private TableColumn<Cliente, Integer> idClientesB;//00095123 columna de la tvb que contiene el id del cliente
     @FXML
-    private TableColumn<Cliente, String> idNombreB;
+    private TableColumn<Cliente, String> idNombreB;//00095123 columna de la tvb que contiene el nombre del cliente
     @FXML
-    private TableColumn<Cliente, Double> idCompraB;
+    private TableColumn<Cliente, Double> idCompraB;//00095123 columna de la tvb que contiene el total gastado en un mes
     @FXML
-    private TextField idClienteB;
+    private TextField idClienteB;//00095123 campo de texto que guarda el id del cliente
     @FXML
-    private TextField fechaInicioB;
+    private TextField fechaInicioB;//00095123 campo de texto que guarda el mes a evaluar
     @FXML
-    private TextField fechaFinB;
+    private TextField fechaFinB;//00095123 campo de texto que guarda el año a evaluar
     // 00085720 Tabla y sus columnas para mostrar los datos
     @FXML
     private TableView<Item> dataTableView; // 00085720 Tabla para mostrar los elementos
@@ -88,9 +88,9 @@ public class HelloController implements Initializable {
         idMontoA.setCellValueFactory(new PropertyValueFactory<>("monto")); //00013423: Configura la columna del monto total de la compra
         idFechaCompraA.setCellValueFactory(new PropertyValueFactory<>("fechaCompra")); //00013423: //00013423: Configura la columna con la fecha de la compra
 
-        idClientesB.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente")); // Configura la columna ID
-        idNombreB.setCellValueFactory(new PropertyValueFactory<>("nombre")); // Configura la columna Nombre
-        idCompraB.setCellValueFactory(new PropertyValueFactory<>("monto")); // Configura la columna Total Gastado
+        idClientesB.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente")); //00095123 Configura la columna ID
+        idNombreB.setCellValueFactory(new PropertyValueFactory<>("nombre")); //00095123 Configura la columna Nombre
+        idCompraB.setCellValueFactory(new PropertyValueFactory<>("monto")); //00095123 Configura la columna Total Gastado
     }
 
     //00085720 Metodo para crear un nuevo elemento
@@ -223,34 +223,26 @@ public class HelloController implements Initializable {
     }
     @FXML
     private void onGenerarReporteBButtonClick(ActionEvent event) {
-        String idClienteStr = idClienteB.getText(); // Obtener el ID de cliente desde el TextField
-        String mesStr = fechaInicioB.getText(); // Obtener el mes desde el TextField
-        String anioStr = fechaFinB.getText(); // Obtener el año desde el TextField
-        // Validar que todos los campos estén llenos
-        if (idClienteStr.isEmpty() || mesStr.isEmpty() || anioStr.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Fallo", "Llene todos los campos");
+        String idClienteStr = idClienteB.getText(); //00095123 Obtener el ID de cliente desde el TextField
+        String mesStr = fechaInicioB.getText(); //00095123 Obtener el mes desde el TextField
+        String anioStr = fechaFinB.getText(); //00095123 Obtener el año desde el TextField
+        if (idClienteStr.isEmpty() || mesStr.isEmpty() || anioStr.isEmpty()) { //00095123 Validar que todos los campos estén llenos
+            showAlert(Alert.AlertType.WARNING, "Fallo", "Llene todos los campos");//00095123 Mostrala una alerta para que esten llenos los campos
             return;
         }
 
         try {
-            int idCliente = Integer.parseInt(idClienteStr); // Convertir el ID de cliente a entero
-            int mes = Integer.parseInt(mesStr); // Convertir el mes a entero
-            int anio = Integer.parseInt(anioStr); // Convertir el año a entero
-
-            // Llamar al método getClientes de ReporteB para obtener los datos del reporte B
-            ReporteB reporteB = new ReporteB();
-            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteB.txt");
-            reporteB.generarReporteB(file, idCliente, mes, anio);
-            ObservableList<Cliente> datos = reporteB.getClientes(idCliente, mes, anio);
-
-            // Mostrar los datos en el TableView
-            reporteTableViewB.setItems(datos);
-
-            // Mostrar mensaje de éxito (opcional)
-            showAlert(Alert.AlertType.INFORMATION, "Éxito", "Reporte B generado y mostrado correctamente");
-
+            int idCliente = Integer.parseInt(idClienteStr); //00095123 convierte el ID de cliente a entero
+            int mes = Integer.parseInt(mesStr); //00095123 convierte el mes a entero
+            int anio = Integer.parseInt(anioStr); //00095123 convierte el año a entero
+            ReporteB reporteB = new ReporteB();//00095123 Llamar al método getClientes de ReporteB para obtener los datos del reporte B
+            File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteB.txt");//00095123 se crea un archivo file en la ruta actual, con el nombre ReporteB.txt
+            reporteB.generarReporteB(file, idCliente, mes, anio);//00095123 llamar al metodo para generar el reporte B
+            ObservableList<Cliente> datos = reporteB.getClientes(idCliente, mes, anio);//00095123 se instancia un objeto datos que guardara la lista de clientes que retorna el netodo getClientes();
+            reporteTableViewB.setItems(datos);//00095123 mostrar los datos en el TableView
+            showAlert(Alert.AlertType.INFORMATION, "Éxito", "Reporte B generado y mostrado correctamente");//00095123 Mostrar mensaje de éxito (opcional)
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "ID de cliente, mes y año deben ser números válidos");
+            showAlert(Alert.AlertType.ERROR, "Error", "ID de cliente, mes y año deben ser números válidos");//00095123 muestra una alerta donde los valores ingresados tienen que ser correctos
         }
     }
     @FXML
