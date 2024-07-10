@@ -2,29 +2,21 @@ package org.example.parcialfinalpoo;
 
 import EntidadesBD.Cliente;
 import EntidadesBD.Tarjeta;
-import EntidadesBD.Transaccion;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class HelloController implements Initializable {
@@ -50,6 +42,16 @@ public class HelloController implements Initializable {
     @FXML
     private TableView<Cliente> reporteTableViewD; //00085720 Table view usada para el reporte D
     @FXML
+    private TextField idTarjetaField;
+    @FXML
+    private TextField fechaCompraField;
+    @FXML
+    private TextField montoField;
+    @FXML
+    private TextField idCompraField;
+    @FXML
+    private ListView<Compra> comprasList;
+    @FXML
     private TableColumn<Tarjeta, Integer> idColumnD;
     @FXML
     private TableColumn<Tarjeta,String> nombreColumnD;
@@ -68,6 +70,8 @@ public class HelloController implements Initializable {
 
     // 00085720 Tabla y sus columnas para mostrar los datos
     @FXML
+    private TableView<Compra> comprasTableView; // 00085720 Table view usada para el reporte
+    @FXML
     private TableView<Item> dataTableView; // 00085720 Tabla para mostrar los elementos
     @FXML
     private TableColumn<Item, String> idColumn; // 00085720 Columna para el ID
@@ -78,6 +82,9 @@ public class HelloController implements Initializable {
 
     // 00085720 Lista observable para almacenar los elementos
     private final ObservableList<Item> itemList = FXCollections.observableArrayList();
+
+    private CompraDAO compraDAO;
+    private ObservableList<Compra> comprasList1;
 
     // 00085720 Metodo que se llama al inicializar el controlador
     @Override
@@ -94,6 +101,11 @@ public class HelloController implements Initializable {
         nombreColumnD.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         cantidadComprasColumn.setCellValueFactory(new PropertyValueFactory<>("cantidadCompras"));
         columnFacilitador.setCellValueFactory(new PropertyValueFactory<>("Facilitador"));
+
+        compraDAO = new CompraDAO();
+        comprasList1 = FXCollections.observableArrayList();
+        comprasTableView.setItems(comprasList1);
+        cargarCompras();
     }
 
     //00085720 Metodo para crear un nuevo elemento
@@ -395,5 +407,50 @@ public class HelloController implements Initializable {
             e.printStackTrace(); // 00085720 Imprime la traza de la excepción
             showAlert(Alert.AlertType.ERROR, "Error", "Error al escribir en el archivo."); // 00085720 Muestra una alerta indicando error en la escritura del archivo
         }
+    }
+
+    @FXML
+    public void crearCompra() {
+        Compra compra = new Compra(
+                0, // El idCompra será autoincrementa
+                Integer.parseInt(idField.getText()),
+                Integer.parseInt(idTarjetaField.getText()),
+                fechaCompraField.getText(),
+                Double.parseDouble(montoField.getText()),
+                descriptionField.getText()
+        );
+        compraDAO.crearCompra(compra);
+        cargarCompras();
+    }
+
+    @FXML
+    public void consultarCompras() {
+        cargarCompras();
+    }
+
+    @FXML
+    public void actualizarCompra() {
+        Compra compra = new Compra(
+                Integer.parseInt(idCompraField.getText()),
+                Integer.parseInt(idField.getText()),
+                Integer.parseInt(idTarjetaField.getText()),
+                fechaCompraField.getText(),
+                Double.parseDouble(montoField.getText()),
+                descriptionField.getText()
+        );
+        compraDAO.actualizarCompra(compra);
+        cargarCompras();
+    }
+
+    @FXML
+    public void eliminarCompra() {
+        int idCompra = Integer.parseInt(idCompraField.getText());
+        compraDAO.eliminarCompra(idCompra);
+        cargarCompras();
+    }
+
+    private void cargarCompras() {
+        List<Compra> compras = compraDAO.obtenerCompras();
+            comprasList1.setAll(compras);
     }
 }

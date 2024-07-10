@@ -149,10 +149,10 @@
             <TextField fx:id="descripcionCompraField" />
           </HBox>
           <HBox spacing="10">
-            <Button text="Crear" />
-            <Button text="Consultar" />
-            <Button text="Actualizar" />
-            <Button text="Eliminar" />
+            <Button onAction="#crearCompra" text="Crear" />
+            <Button onAction="#consultarCompras" text="Consultar" />
+            <Button onAction="#actualizarCompra" text="Actualizar" />
+            <Button onAction="#eliminarCompra" text="Eliminar" />
           </HBox>
           <TableView fx:id="comprasTableView" prefHeight="200.0" prefWidth="800.0">
             <columns>

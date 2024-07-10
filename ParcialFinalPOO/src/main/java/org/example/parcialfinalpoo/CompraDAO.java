@@ -1,5 +1,7 @@
 package org.example.parcialfinalpoo;
 
+import javafx.scene.control.Alert;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +10,16 @@ public class CompraDAO {
     private Connection connection;
 
     public CompraDAO() {
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; // 00085720 URL de la base de datos
+        String user = "poo"; // 00085720 Usuario de la base de datos
+        String password = "ParcialFinal"; // 00085720 Contraseña de la base de datos
         // Conectar a la base de datos
         try {
-            this.connection = (Connection) DriverManager.getConnection("jdbc:sqlite:tu_basededatos.db");
-        } catch (SQLException e) {
-            e.printStackTrace();
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // 00085720 Carga el controlador JDBC para SQL Server
+            this.connection = (Connection) DriverManager.getConnection(url, user, password); // 00085720 Establece la conexión con la base de datos
+            //this.connection = (Connection) DriverManager.getConnection("jdbc:sqlite:tu_basededatos.db");
+        } catch (ClassNotFoundException | SQLException e) { // 00085720 Maneja las excepciones de clase no encontrada y SQL
+            e.printStackTrace(); // 00085720 Imprime la traza de la excepcion
         }
     }
 
