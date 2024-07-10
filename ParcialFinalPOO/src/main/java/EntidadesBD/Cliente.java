@@ -57,33 +57,34 @@ public class Cliente {
         this.telefono = telefono; //00013423: Metodo setter para darle un valor al campo telefono
     }
 
-    public double getMonto() {
+    public double getMonto() {//00085720 get monto
         return monto;
     }
 
-    public void setMonto(double monto) {
+    public void setMonto(double monto) {//00085720 set monto
         this.monto = monto;
     }
 
-    public String getFechaCompra() {
+    public String getFechaCompra() {//00085720 get fecha
         return fechaCompra;
     }
 
-    public void setFechaCompra(String fechaCompra) {
+    public void setFechaCompra(String fechaCompra) {//00085720 set fecha
         this.fechaCompra = fechaCompra;
     }
-
-    public void setCantidadCompras(int cantidadCompras) {
+    public int getCantidadCompras() {//00085720 get cant
+        return cantidadCompras;
     }
 
-    public void setFacilitador(String facilitador) {
+    public void setCantidadCompras(int cantidadCompras) {//00085720set cant
+        this.cantidadCompras = cantidadCompras;
     }
 
-    public int getCantidadCompras() {
-        return this.cantidadCompras;
+    public String getFacilitador() {//00085720get facilitador
+        return facilitador;
     }
 
-    public String getFacilitador() {
-        return this.facilitador;
+    public void setFacilitador(String facilitador) {//00085720 set facilitador
+        this.facilitador = facilitador;
     }
 }
