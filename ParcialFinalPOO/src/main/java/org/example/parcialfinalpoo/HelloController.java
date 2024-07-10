@@ -50,6 +50,14 @@ public class HelloController implements Initializable {
     @FXML
     private TextField facilitadorClienteD; //00085720 Guarda el facilitador del cliente
     @FXML
+    private TableView<Tarjeta> reporteTableViewD; 
+    @FXML
+    private TableColumn<Tarjeta, Integer> idClienteD;
+    @FXML
+    private TableColumn<Tarjeta,String> idNameD; 
+    @FXML
+    private TableColumn<Tarjeta, Int> cantidadCompras; 
+    @FXML
     private TableColumn<Cliente, Integer> idColumnA; //00013423: Columna de la TVA que contiene el id del cliente
     @FXML
     private TableColumn<Cliente, String> idNameA; //00013423: Columna de la TVA que contiene el nombre del cliente
