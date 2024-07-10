@@ -46,9 +46,17 @@ public class HelloController implements Initializable {
     @FXML
     private TableView<Cliente> reporteTableViewA; //00013423: Table view usada para el reporte A
     @FXML
+    private TextField facilitadorClienteD; //00085720 Guarda el facilitador del cliente
+    @FXML
     private TableView<Cliente> reporteTableViewD; //00085720 Table view usada para el reporte D
     @FXML
-    private TextField facilitadorClienteD; //00085720 Guarda el facilitador del cliente
+    private TableColumn<Tarjeta, Integer> idColumnD;
+    @FXML
+    private TableColumn<Tarjeta,String> nombreColumnD;
+    @FXML
+    private TableColumn<Tarjeta, Integer> cantidadComprasColumn;
+    @FXML
+    private TableColumn<Tarjeta,String> columnFacilitador;
     @FXML
     private TableColumn<Cliente, Integer> idColumnA; //00013423: Columna de la TVA que contiene el id del cliente
     @FXML
@@ -86,6 +94,11 @@ public class HelloController implements Initializable {
         idNameA.setCellValueFactory(new PropertyValueFactory<>("nombre")); //00013423: Configura la columna de nombre
         idMontoA.setCellValueFactory(new PropertyValueFactory<>("monto")); //00013423: Configura la columna del monto total de la compra
         idFechaCompraA.setCellValueFactory(new PropertyValueFactory<>("fechaCompra")); //00013423: //00013423: Configura la columna con la fecha de la compra
+
+        idColumnD.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente"));
+        nombreColumnD.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        cantidadComprasColumn.setCellValueFactory(new PropertyValueFactory<>("cantidadCompras"));
+        columnFacilitador.setCellValueFactory(new PropertyValueFactory<>("Facilitador"));
     }
 
     //00085720 Metodo para crear un nuevo elemento
@@ -235,7 +248,7 @@ public class HelloController implements Initializable {
         if (facilitadorClienteD.getText().isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Fallo", "Llene el campo necesario");
         } else {
-            ObservableList<Cliente> datos = getClientes();
+            ObservableList<Cliente> datos = getClientesPorFacilitador();
             reporteTableViewD.setItems(datos);
             File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteD.txt");
             generarReporteD(file, facilitadorClienteD.getText());
@@ -282,6 +295,7 @@ public class HelloController implements Initializable {
                 Cliente client = new Cliente(cliente.getID_Cliente(), cliente.getNombre(), cliente.getMonto(), cliente.getFechaCompra()); //00013423: Se hace uso del metodo Constructor creado especificamente para la consulta A
                 clientes.add(client); //00013423: Se añaden los resultados a la lista que se le pasara como parametro al metodo .setItems(clientes) en el boton onGenerarReporteAButtonClick
             }
+            conn.close(); //00013423: Cerrando conexion a la BD
         } catch (Exception e) { //00013423: Control para el manejo de excepciones
             e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
         }
@@ -321,55 +335,70 @@ public class HelloController implements Initializable {
         }
     }
 
-    public ObservableList<Cliente> getClientesPorFacilitador(String facilitador) {
-        ObservableList<Cliente> clientes = FXCollections.observableArrayList();
-        String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false";
-        String user = "poo";
-        String password = "ParcialFinal";
-
+    public ObservableList<Cliente> getClientesPorFacilitador() { // 00085720 Define un método para obtener clientes por facilitador
+        ObservableList<Cliente> clientes = FXCollections.observableArrayList(); // 00085720 Crea una lista observable para almacenar los clientes
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; // 00085720 URL de la base de datos
+        String user = "poo"; // 00085720 Usuario de la base de datos
+        String password = "ParcialFinal"; // 00085720 Contraseña de la base de datos
         try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            Connection connection = DriverManager.getConnection(url, user, password);
-            String consulta = "SELECT c.ID, c.nombre, c.cantidadCompras FROM Cliente c WHERE c.facilitador = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(consulta);
-            preparedStatement.setString(1, facilitador);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // 00085720 Carga el controlador JDBC para SQL Server
+            Connection conn = DriverManager.getConnection(url, user, password); // 00085720 Establece la conexión con la base de datos
 
-            while (resultSet.next()) {
-                int id = resultSet.getInt("ID");
-                String nombre = resultSet.getString("nombre");
-                int cantidadCompras = resultSet.getInt("cantidadCompras");
-                clientes.add(new Cliente(id, nombre, cantidadCompras));
+            String queryD = "SELECT " + // 00085720 Define la consulta SQL para obtener clientes y sus compras
+                    "    cl.ID_Cliente, " +
+                    "    cl.Nombre, " +
+                    "    COUNT(trns.ID_Transacción) AS 'CantidadCompras', " +
+                    "    trj.Facilitador " +
+                    "FROM " +
+                    "    Cliente cl " +
+                    "    INNER JOIN Tarjeta trj ON cl.ID_Cliente = trj.ID_Cliente " +
+                    "    INNER JOIN Transacción trns ON trj.Número_Tarjeta = trns.Número_Tarjeta " +
+                    "WHERE " +
+                    "    trj.Facilitador = ? " +
+                    "GROUP BY " +
+                    "    cl.ID_Cliente, cl.Nombre, trj.Facilitador;";
+
+            PreparedStatement pstmt = conn.prepareStatement(queryD); // 00085720 Prepara la consulta SQL con un parámetro
+            pstmt.setString(1, facilitadorClienteD.getText()); // 00085720 Establece el valor del parámetro de la consulta
+            ResultSet rs = pstmt.executeQuery(); // 00085720 Ejecuta la consulta y obtiene los resultados
+
+            while (rs.next()) { // 00085720 Itera sobre los resultados de la consulta
+                Cliente cliente = new Cliente(); // 00085720 Crea un nuevo objeto Cliente
+                cliente.setID_Cliente(rs.getInt("ID_Cliente")); // 00085720 Establece el ID del cliente
+                cliente.setNombre(rs.getString("Nombre")); // 00085720 Establece el nombre del cliente
+                cliente.setCantidadCompras(rs.getInt("CantidadCompras")); // 00085720 Establece la cantidad de compras del cliente
+                cliente.setFacilitador(rs.getString("Facilitador")); // 00085720 Establece el facilitador del cliente
+                clientes.add(new Cliente(cliente.getID_Cliente(), cliente.getNombre(), cliente.getCantidadCompras(), cliente.getFacilitador()));// 00085720 Añade el cliente a la lista observable
             }
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", "Error en la conexión a la base de datos.");
+        } catch (ClassNotFoundException | SQLException e) { // 00085720 Maneja las excepciones de clase no encontrada y SQL
+            e.printStackTrace(); // 00085720 Imprime la traza de la excepcion
+            showAlert(Alert.AlertType.ERROR, "Error", "Error en la conexión a la base de datos.");// 00085720 Muestra una alerta de error
         }
         return clientes;
     }
 
-    public void generarReporteD(File file, String facilitador) {
-        ObservableList<Cliente> datos = getClientesPorFacilitador(facilitador);
+
+    public void generarReporteD(File file, String facilitador) { // 00085720 Define un método para generar un reporte en un archivo
+        ObservableList<Cliente> datos = getClientesPorFacilitador(); // 00085720 Obtiene la lista de clientes filtrados por facilitador
         try {
-            FileWriter writer;
-            if (file.exists()) {
-                writer = new FileWriter(file, true); // Append mode
-            } else {
-                writer = new FileWriter(file); // Overwrite mode
+            FileWriter writer; // 00085720 Declara un FileWriter
+            if (file.exists()) { // 00085720 Si el archivo existe, abre en modo de agregar
+                writer = new FileWriter(file, true); // 00085720 Append mode
+            } else { // 00085720 Si el archivo no existe, crea uno nuevo
+                writer = new FileWriter(file); // 00085720 Overwrite mode
             }
 
-            for (Cliente cliente : datos) {
-                String info = "ID: " + cliente.getID_Cliente() +
+            for (Cliente cliente : datos) { // 00085720 Itera sobre la lista de clientes
+                String info = "ID: " + cliente.getID_Cliente() + // 00085720 Construye una cadena con la información del cliente
                         ", Nombre: " + cliente.getNombre() +
                         ", Cantidad de Compras: " + cliente.getCantidadCompras() + "\n";
-                writer.write(info);
+                writer.write(info); // 00085720 Escribe la información en el archivo
             }
-            writer.close();
-            showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Reporte generado con éxito");
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", "Error al escribir en el archivo.");
+            writer.close(); // 00085720 Cierra el FileWriter
+            showAlert(Alert.AlertType.INFORMATION, "Reporte D", "Reporte generado con éxito"); // 00085720 Muestra una alerta indicando éxito en la generación del reporte
+        } catch (IOException e) { // 00085720 Maneja excepciones de entrada/salida
+            e.printStackTrace(); // 00085720 Imprime la traza de la excepción
+            showAlert(Alert.AlertType.ERROR, "Error", "Error al escribir en el archivo."); // 00085720 Muestra una alerta indicando error en la escritura del archivo
         }
     }
-
 }
