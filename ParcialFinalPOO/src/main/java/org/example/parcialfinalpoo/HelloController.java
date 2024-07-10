@@ -282,6 +282,7 @@ public class HelloController implements Initializable {
                 Cliente client = new Cliente(cliente.getID_Cliente(), cliente.getNombre(), cliente.getMonto(), cliente.getFechaCompra()); //00013423: Se hace uso del metodo Constructor creado especificamente para la consulta A
                 clientes.add(client); //00013423: Se añaden los resultados a la lista que se le pasara como parametro al metodo .setItems(clientes) en el boton onGenerarReporteAButtonClick
             }
+            conn.close(); //00013423: Cerrando conexion a la BD
         } catch (Exception e) { //00013423: Control para el manejo de excepciones
             e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
         }
@@ -339,7 +340,7 @@ public class HelloController implements Initializable {
                 int id = resultSet.getInt("ID");
                 String nombre = resultSet.getString("nombre");
                 int cantidadCompras = resultSet.getInt("cantidadCompras");
-                clientes.add(new Cliente(id, nombre, cantidadCompras));
+                clientes.add(new Cliente(id, nombre, cantidadCompras,facilitador));
             }
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
