@@ -330,12 +330,10 @@ public class HelloController implements Initializable {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             Connection connection = DriverManager.getConnection(url, user, password);
-            String consulta = "SELECT c.ID, c.nombre, c.cantidadCompras FROM Cliente c WHERE c.facilitador = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(consulta);
-            preparedStatement.setString(1, facilitador);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()) {
+            String queryD = "SELECT c.ID, c.nombre, c.cantidadCompras FROM Cliente c WHERE c.facilitador = ?";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(queryD);
+            while (rs.next()) {
                 int id = resultSet.getInt("ID");
                 String nombre = resultSet.getString("nombre");
                 int cantidadCompras = resultSet.getInt("cantidadCompras");
