@@ -8,8 +8,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -18,45 +16,160 @@
   <padding>
     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
   </padding>
-  <Tab text="CRUD">
+
+  <!-- Clientes Tab -->
+  <Tab text="Clientes">
     <AnchorPane>
-      <VBox prefHeight="547.0" prefWidth="614.0" spacing="10">
+      <VBox prefHeight="547.0" prefWidth="802.0" spacing="10">
         <padding>
           <Insets bottom="10" left="10" right="10" top="10" />
         </padding>
-        <HBox spacing="10">
-          <Label text="ID:" />
-          <TextField fx:id="idField" />
-        </HBox>
-        <HBox spacing="10">
-          <Label text="Nombre:" />
-          <TextField fx:id="nameField" />
-        </HBox>
-        <HBox spacing="10">
-          <Label text="Descripción:" />
-          <TextField fx:id="descriptionField" />
-        </HBox>
-        <HBox spacing="10">
-          <Label text="Facilitador:" />
-          <TextField fx:id="facilitadorField" />
-        </HBox>
-        <HBox spacing="10">
-          <Button onAction="#create" text="Crear" />
-          <Button onAction="#read" text="Consultar" />
-          <Button onAction="#update" text="Actualizar" />
-          <Button onAction="#delete" text="Eliminar" />
-        </HBox>
-        <TableView fx:id="dataTableView" prefHeight="347.0" prefWidth="632.0">
-          <columns>
-            <TableColumn fx:id="idColumn" prefWidth="106.99999463558197" text="ID" />
-            <TableColumn fx:id="nameColumn" prefWidth="208.00003814697266" text="Nombre" />
-            <TableColumn fx:id="descriptionColumn" minWidth="0.0" prefWidth="136.0" text="Descripción" />
-            <TableColumn fx:id="facilitadorColumn" prefWidth="142.199951171875" text="Facilitador" />
-          </columns>
-        </TableView>
+        <VBox spacing="10">
+          <Label text="Clientes" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+          <HBox spacing="10">
+            <Label text="ID:" />
+            <TextField fx:id="idClienteField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="Nombre:" />
+            <TextField fx:id="nombreClienteField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="Dirección:" />
+            <TextField fx:id="direccionClienteField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="Teléfono:" />
+            <TextField fx:id="telefonoClienteField" />
+          </HBox>
+          <HBox spacing="10">
+            <Button onAction="#createCliente" text="Crear" />
+            <Button onAction="#readCliente" text="Consultar" />
+            <Button onAction="#updateCliente" text="Actualizar" />
+            <Button onAction="#deleteCliente" text="Eliminar" />
+          </HBox>
+          <TableView fx:id="clientesTableView" prefHeight="200.0" prefWidth="800.0">
+            <columns>
+              <TableColumn fx:id="idClienteColumn" text="ID" />
+              <TableColumn fx:id="nombreClienteColumn" text="Nombre" />
+              <TableColumn fx:id="direccionClienteColumn" text="Dirección" />
+              <TableColumn fx:id="telefonoClienteColumn" text="Teléfono" />
+            </columns>
+          </TableView>
+        </VBox>
       </VBox>
     </AnchorPane>
   </Tab>
+
+  <!-- Tarjetas Tab -->
+  <Tab text="Tarjetas">
+    <AnchorPane>
+      <VBox prefHeight="547.0" prefWidth="802.0" spacing="10">
+        <padding>
+          <Insets bottom="10" left="10" right="10" top="10" />
+        </padding>
+        <VBox spacing="10">
+          <Label text="Tarjetas" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+          <HBox spacing="10">
+            <Label text="ID Tarjeta:" />
+            <TextField fx:id="idTarjetaField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="ID Cliente:" />
+            <TextField fx:id="idClienteTarjetaField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="Número de Tarjeta:" />
+            <TextField fx:id="numeroTarjetaField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="Fecha de Expiración:" />
+            <TextField fx:id="fechaExpiracionTarjetaField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="Tipo:" />
+            <TextField fx:id="tipoTarjetaField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="Facilitador:" />
+            <TextField fx:id="facilitadorTarjetaField" />
+          </HBox>
+          <HBox spacing="10">
+            <Button onAction="#createTarjeta" text="Crear" />
+            <Button onAction="#readTarjeta" text="Consultar" />
+            <Button onAction="#updateTarjeta" text="Actualizar" />
+            <Button onAction="#deleteTarjeta" text="Eliminar" />
+          </HBox>
+          <TableView fx:id="tarjetasTableView" prefHeight="200.0" prefWidth="800.0">
+            <columns>
+              <TableColumn fx:id="idTarjetaColumn" text="ID Tarjeta" />
+              <TableColumn fx:id="idClienteTarjetaColumn" text="ID Cliente" />
+              <TableColumn fx:id="numeroTarjetaColumn" text="Número de Tarjeta" />
+              <TableColumn fx:id="fechaExpiracionTarjetaColumn" text="Fecha de Expiración" />
+              <TableColumn fx:id="tipoTarjetaColumn" text="Tipo" />
+              <TableColumn fx:id="facilitadorTarjetaColumn" text="Facilitador" />
+            </columns>
+          </TableView>
+        </VBox>
+      </VBox>
+    </AnchorPane>
+  </Tab>
+
+  <!-- Compras Tab -->
+  <Tab text="Compras">
+    <AnchorPane>
+      <VBox prefHeight="547.0" prefWidth="802.0" spacing="10">
+        <padding>
+          <Insets bottom="10" left="10" right="10" top="10" />
+        </padding>
+        <VBox spacing="10">
+          <Label text="Compras" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+          <HBox spacing="10">
+            <Label text="ID Compra:" />
+            <TextField fx:id="idCompraField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="ID Cliente:" />
+            <TextField fx:id="idClienteCompraField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="ID Tarjeta:" />
+            <TextField fx:id="idTarjetaCompraField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="Fecha de Compra:" />
+            <TextField fx:id="fechaCompraField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="Monto:" />
+            <TextField fx:id="montoCompraField" />
+          </HBox>
+          <HBox spacing="10">
+            <Label text="Descripción:" />
+            <TextField fx:id="descripcionCompraField" />
+          </HBox>
+          <HBox spacing="10">
+            <Button onAction="#createCompra" text="Crear" />
+            <Button onAction="#readCompra" text="Consultar" />
+            <Button onAction="#updateCompra" text="Actualizar" />
+            <Button onAction="#deleteCompra" text="Eliminar" />
+          </HBox>
+          <TableView fx:id="comprasTableView" prefHeight="200.0" prefWidth="800.0">
+            <columns>
+              <TableColumn fx:id="idCompraColumn" text="ID Compra" />
+              <TableColumn fx:id="idClienteCompraColumn" text="ID Cliente" />
+              <TableColumn fx:id="idTarjetaCompraColumn" text="ID Tarjeta" />
+              <TableColumn fx:id="fechaCompraColumn" text="Fecha de Compra" />
+              <TableColumn fx:id="montoCompraColumn" text="Monto" />
+              <TableColumn fx:id="descripcionCompraColumn" text="Descripción" />
+            </columns>
+          </TableView>
+        </VBox>
+      </VBox>
+    </AnchorPane>
+  </Tab>
+
+  <!-- Reporte A Tab -->
   <Tab text="Reporte A">
     <VBox alignment="CENTER" spacing="20.0">
       <HBox spacing="10.0">
@@ -93,6 +206,8 @@
       </TableView>
     </VBox>
   </Tab>
+
+  <!-- Reporte B Tab -->
   <Tab text="Reporte B">
     <VBox alignment="CENTER" spacing="20.0">
       <HBox spacing="10.0">
@@ -128,6 +243,8 @@
       </TableView>
     </VBox>
   </Tab>
+
+  <!-- Reporte C Tab -->
   <Tab text="Reporte C">
     <VBox alignment="CENTER" spacing="20.0">
       <HBox spacing="10.0">
@@ -159,6 +276,8 @@
       </TableView>
     </VBox>
   </Tab>
+
+  <!-- Reporte D Tab -->
   <Tab text="Reporte D">
     <VBox alignment="CENTER" spacing="20.0">
       <HBox spacing="10.0">
@@ -186,7 +305,7 @@
           <TableColumn fx:id="idColumnD" prefWidth="135.19997787475586" text="ID Cliente" />
           <TableColumn fx:id="nombreColumnD" prefWidth="214.0" text="Nombre" />
           <TableColumn fx:id="cantidadComprasColumn" prefWidth="237.0" text="Cantidad de Compras" />
-               <TableColumn fx:id="columnFacilitador" prefWidth="341.0" text="Facilitador" />
+          <TableColumn fx:id="columnFacilitador" prefWidth="341.0" text="Facilitador" />
         </columns>
       </TableView>
       <Label fx:id="facilitadorTextField" text="Estado del Reporte" />
