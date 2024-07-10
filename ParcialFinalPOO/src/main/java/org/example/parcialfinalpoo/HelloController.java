@@ -1,6 +1,8 @@
 package org.example.parcialfinalpoo;
 
 import EntidadesBD.Cliente;
+import EntidadesBD.Tarjeta;
+import EntidadesBD.Transaccion;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,18 +12,22 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.LocalDate;
 import java.util.ResourceBundle;
+
 public class HelloController implements Initializable {
 
     // 00085720 Campos de texto para ingresar datos
@@ -30,6 +36,7 @@ public class HelloController implements Initializable {
     @FXML
     private TextField nameField; // 00085720 Campo de texto para el nombre
     @FXML
+
     private TextField descriptionField; // 00085720 Campo de texto para la descripción
     @FXML
     private TextField idClienteA; //00013423: Campo de texto que guardara el id del cliente a buscar
@@ -61,6 +68,17 @@ public class HelloController implements Initializable {
     private TextField fechaInicioB;//00095123 campo de texto que guarda el mes a evaluar
     @FXML
     private TextField fechaFinB;//00095123 campo de texto que guarda el año a evaluar
+    @FXML 
+    private TextField idClienteC; //00379823: Campo de texto que va a almacenar el id del cliente a buscar
+    @FXML
+    private TableView<Tarjeta> reporteTableViewC; //00379823: Table view usada para el reporte C
+    @FXML
+    private TableColumn<Tarjeta, String> numTarjetaC; //00379823: Columna de la TVA que contiene el numero de tarjeta
+    @FXML
+    private TableColumn<Tarjeta,String> tipoTarjetaC; //00379823: Columna de la TVA que contiene el tipo de tarjeta
+    @FXML
+    private TableColumn<Tarjeta, String> fechaExpTarjetaC; //00379823: Columna de la TVA que contiene la fecha de expiración de la tarjeta
+
     // 00085720 Tabla y sus columnas para mostrar los datos
     @FXML
     private TableView<Item> dataTableView; // 00085720 Tabla para mostrar los elementos
@@ -70,8 +88,10 @@ public class HelloController implements Initializable {
     private TableColumn<Item, String> nameColumn; // 00085720 Columna para el nombre
     @FXML
     private TableColumn<Item, String> descriptionColumn; // 00085720 Columna para la descripción
+
     // 00085720 Lista observable para almacenar los elementos
     private final ObservableList<Item> itemList = FXCollections.observableArrayList();
+
     // 00085720 Metodo que se llama al inicializar el controlador
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -91,6 +111,10 @@ public class HelloController implements Initializable {
         idClientesB.setCellValueFactory(new PropertyValueFactory<>("ID_Cliente")); //00095123 Configura la columna ID
         idNombreB.setCellValueFactory(new PropertyValueFactory<>("nombre")); //00095123 Configura la columna Nombre
         idCompraB.setCellValueFactory(new PropertyValueFactory<>("monto")); //00095123 Configura la columna Total Gastado
+      
+        numTarjetaC.setCellValueFactory(new PropertyValueFactory<>("numeroTarjetaCensurado"));
+        tipoTarjetaC.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+        fechaExpTarjetaC.setCellValueFactory(new PropertyValueFactory<>("fechaExpiracion"));
     }
 
     //00085720 Metodo para crear un nuevo elemento
@@ -245,11 +269,18 @@ public class HelloController implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Error", "ID de cliente, mes y año deben ser números válidos");//00095123 muestra una alerta donde los valores ingresados tienen que ser correctos
         }
     }
-    @FXML
-    private void onGenerarReporteCButtonClick(ActionEvent event) {
-        // Codigo para generar reporte C
-        showAlert(Alert.AlertType.INFORMATION, "Reporte C", "Generar Reporte C");
+
+  @FXML
+private void onGenerarReporteCButtonClick(ActionEvent event) { //00379823: Boton que genera el reporte C
+    if (idClienteC.getText().isEmpty()) { //00379823: Mostrará error en caso que este campo no se haya llenado adecuadamente
+        showAlert(Alert.AlertType.WARNING, "Fallo", "El ID del cliente es inválido"); //00379823: Mostrara la alerta 
+    } else {
+        ObservableList<Tarjeta> datos = getTarjetasCliente(); //00379823: Se instancia un objeto de datos que guarda la lista de tarjetas por cliente que retorna el metodo getTarjetasCliente();  
+        reporteTableViewC.setItems(datos); //00379823: Mostrara los datos en el TableViewC del reporte C como corresponde
+        File file = new File(System.getProperty("user.dir") + "/src/main/java/Reportes/", "ReporteC.txt"); //00379823: Se crea un archivo tipo file en la ruta acutal, con el nombre ReporteC.txt
+        generarReporteC(file); //00379823: Se llama al metodo que genera los reportes de la consulta C
     }
+}
 
     @FXML
     private void onGenerarReporteDButtonClick(ActionEvent event) {
@@ -274,6 +305,68 @@ public class HelloController implements Initializable {
             System.out.println("Se establecio la conexion correctamente"); //00013423: Mensaje para saber si la conexion se establecio correctamente
         } catch (Exception e) { //00013423: Control para el manejo de excepciones
             e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+        }
+    }
+
+
+    public void generarReporteA(File file){
+        ObservableList<Cliente> datos = getClientes(); //00013423: Carga los datos de la lista
+        if (!file.exists()){ //00013423: Verifica si existe el archivo
+            try {
+                FileWriter writer = new FileWriter(file); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
+                for(Cliente cliente : datos){ //00013423: ciclo for que permitira recorrer los elementos de la lista.
+                    String info = "ID: " + cliente.getID_Cliente() //0013423: variable que ira guardando los datos de la lista a medida que realiza iteraciones
+                            +"    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
+                            +"    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
+                            +"    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
+                    writer.write(info); //00013423: metodo de la instancia writer que escribira los datos correspondientes a cada iteracion
+                }
+                writer.close(); //00013423: Cierra el flujo de escritura en el archivo reporteA
+            } catch (Exception e) {
+                e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+            }
+        } else {
+            try {
+                FileWriter writer = new FileWriter(file,true); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
+                for(Cliente cliente : datos){ //00013423: ciclo for que permitira recorrer los elementos de la lista.
+                    String info = "ID: " + cliente.getID_Cliente() //0013423: variable que ira guardando los datos de la lista a medida que realiza iteraciones
+                            +"    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
+                            +"    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
+                            +"    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
+                    writer.write(info); //00013423: metodo de la instancia writer que escribira los datos correspondientes a cada iteracion
+                }
+                writer.close(); //00013423: Cierra el flujo de escritura en el archivo reporteA
+            } catch (Exception e) { //00013423: Control para el manejo de excepciones
+                e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+            }
+        }
+    }
+
+    public void generarReporteC(File file) {
+        ObservableList<Tarjeta> datos = getTarjetasCliente(); //00379823: Carga los datos de la lista
+
+        if (!file.exists()) { //00379823: Verifica si existe este archivo
+            try {
+                FileWriter writer = new FileWriter(file); //00379823: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
+                for (Tarjeta tarjeta : datos) { //00379823: ciclo for que permitira recorrer los elementos de la lista
+                    String info = "Número de Tarjeta: " + tarjeta.getNumeroTarjeta() + "    Tipo: " + tarjeta.getTipo() + "\n"; //00379823: variable que ira guardando los datos de la lista a medida que realiza iteraciones
+                    writer.write(info); //00379823: metodo de la instancia tipo writer que escribira los datos correspondientes a cada iteracion
+                }
+                writer.close(); //00379823: Cierra el flujo de escritura en el archivo reporteC
+            } catch (Exception e) { //00379823: Control para el manejo de excepciones
+                e.printStackTrace(); //00379823: Imprime mensajes de errores estandar en caso de que haya habido algun error
+            }
+        } else {
+            try {
+                FileWriter writer = new FileWriter(file, true); //00379823: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
+                for (Tarjeta tarjeta : datos) { //00379823: ciclo for que permitira recorrer los elementos de la lista
+                    String info = "Número de Tarjeta: " + tarjeta.getNumeroTarjeta() + "    Tipo: " + tarjeta.getTipo() + "\n"; //00379823: variable que ira guardando los datos de la lista a medida que realiza iteraciones
+                    writer.write(info); //00379823: metodo de la instancia tipo writer que escribira los datos correspondientes a cada iteracion
+                }
+                writer.close(); //00379823: Cierra el flujo de escritura en el archivo reporteC
+            } catch (Exception e) {  //00379823: Control para el manejo de excepciones
+                e.printStackTrace(); //00379823: Imprime mensajes de errores estandar en caso de que haya habido algun error
+            }
         }
     }
 
@@ -309,36 +402,31 @@ public class HelloController implements Initializable {
         return clientes; //00013423: Retorna los elementos en la lista
     }
 
-    public void generarReporteA(File file){
-        ObservableList<Cliente> datos = getClientes(); //00013423: Carga los datos de la lista
-        if (!file.exists()){ //00013423: Verifica si existe el archivo
-            try {
-                FileWriter writer = new FileWriter(file); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
-                for(Cliente cliente : datos){ //00013423: ciclo for que permitira recorrer los elementos de la lista.
-                    String info = "ID: " + cliente.getID_Cliente() //0013423: variable que ira guardando los datos de la lista a medida que realiza iteraciones
-                            +"    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
-                            +"    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
-                            +"    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
-                    writer.write(info); //00013423: metodo de la instancia writer que escribira los datos correspondientes a cada iteracion
-                }
-                writer.close(); //00013423: Cierra el flujo de escritura en el archivo reporteA
-            } catch (Exception e) {
-                e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
+    public ObservableList<Tarjeta> getTarjetasCliente() { //00379823: Crea metodo que devolvera una lista de instancias de la clase Tarjeta
+        ObservableList<Tarjeta> tarjetas = FXCollections.observableArrayList(); //00379823: Crea una lista que se usara para guardar los valores que iran en el TableViewC
+        try {
+            int id = Integer.parseInt(idClienteC.getText()); //00379823: Esta línea convierte el valor del campo ID en un entero
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); //00379823: Cargando el controlador para la base de datos
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=PARCIALFINAL;encrypt=false"; //00379823: Variable String la cual se inicializa con la URL de la conexion a la BD
+            String user = "poo"; //00379823: Usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
+            String password = "ParcialFinal"; //00379823: Contraseña del usuario que se le pasara como parametro al metodo .getConnection(url,user,password)
+            Connection conn = DriverManager.getConnection(url, user, password); //00379823: Estableciendo conexion con la base de datos
+            String query = "SELECT Número_Tarjeta, Tipo, Fecha_Expiración FROM Tarjeta WHERE ID_Cliente = " + id; //00379823: Se hace uso de la variable id declarada arriba como parametro de busqueda
+            Statement stmt = conn.createStatement(); //00379823: Se crea un objeto de tipo statement que ayudara a mandar consultas a la BD
+            ResultSet rs = stmt.executeQuery(query); //00379823: Crea un objeto de tipo rs que a su vez ejecuta la consulta a la BD, al metodo .executeQuery se le pasa como parametro la variable string de antes
+            while (rs.next()) { //00379823: Mientras rs.next() sea verdadero, se ira iterando sobre los resultados de la consulta
+                Tarjeta tarjeta = new Tarjeta(); //00379823: Crea una instancia de tarjeta
+                tarjeta.setNumeroTarjeta(rs.getString("Número_Tarjeta")); //00379823: Define los valores de la variable Numero_Tarjeta, pasando como parametro el nombre de la columna de la BD
+                tarjeta.setTipo(rs.getString("Tipo")); //00379823: Define los valores de la variable tipo, pasando como parametro el nombre de la columna de la BD
+                tarjeta.setFechaExpiracion(rs.getString("Fecha_Expiración")); //00379823: Define los valores de la variable FechaExpiracion, pasando como parametro el nombre de la columna de la BD
+                tarjetas.add(tarjeta); //00379823: Se añaden los resultados a la lista que se le pasara como parametro al metodo .setItems(tarjeta) en el boton onGenerarReporteCButtonClick
             }
-        } else {
-            try {
-                FileWriter writer = new FileWriter(file,true); //00013423: Crea una instancia de la clase writer que permitira escribir en el archivo de nombre especificado
-                for(Cliente cliente : datos){ //00013423: ciclo for que permitira recorrer los elementos de la lista.
-                    String info = "ID: " + cliente.getID_Cliente() //0013423: variable que ira guardando los datos de la lista a medida que realiza iteraciones
-                            +"    Nombre: " + cliente.getNombre() //00013423: recupera el nombre del cliente
-                            +"    Monto total: " + cliente.getMonto() //00013423: recupera el monto de la compra del cliente
-                            +"    Fecha de compra: " + cliente.getFechaCompra() + "\n"; //00013423: recupera la fecha de la compra
-                    writer.write(info); //00013423: metodo de la instancia writer que escribira los datos correspondientes a cada iteracion
-                }
-                writer.close(); //00013423: Cierra el flujo de escritura en el archivo reporteA
-            } catch (Exception e) { //00013423: Control para el manejo de excepciones
-                e.printStackTrace(); //00013423: Imprime mensajes de errores estandar en caso de que haya habido algun error
-            }
+            conn.close(); //00379823: Aquí se cierra la conexión a la base de datos
+        } catch (Exception e) { //00379823: Control para el manejo de excepciones
+            e.printStackTrace(); //00379823: Imprime mensajes de errores estandar en caso de que haya habido algun error
         }
+        return tarjetas; //00379823: Retorna los elementos en la lista
     }
+
+
 }

@@ -17,6 +17,9 @@ public class Tarjeta {
         this.FK_idCliente = FK_idCliente;
     } //00013423: Constructor para crear una instancia de Tarjeta con todas las variables inicializadas
 
+    public Tarjeta(String tarjetaCensurada, String crédito) { //comenta aca
+    }
+
     public String getNumeroTarjeta() {
         return numeroTarjeta; //00013423: Metodo getter para acceder al campo numeroTarjeta
     }
@@ -56,4 +59,14 @@ public class Tarjeta {
     public void setFK_idCliente(Cliente FK_idCliente) {
         this.FK_idCliente = FK_idCliente; //00013423: Metodo setter para darle un valor al campo FK_idCliente
     }
+
+
+    public String getNumeroTarjetaCensurado() {
+        if (numeroTarjeta.length() > 4) { //00379823: Condicion para poder ocultar los digitos de la tarjeta tomando en cuenta la longuitud de digitos
+            return "**** **** **** " + numeroTarjeta.substring(numeroTarjeta.length() - 4); //00379823: Devuelve los primeros 12 dígitos y los oculta con * y solo muestra los ultimos 4
+        } else {
+            return numeroTarjeta; // 00379823: En caso de que el número de tarjeta tenga menos de 4 dígitos
+        }
+    }
 }
+
